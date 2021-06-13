@@ -16,6 +16,11 @@ public class PatientDalServiceBean implements IPatientDalService {
         this.patientRepository = patientRepository;
     }
 
+    /**
+     * <b>Create Patient</b>
+     * @param patient mandatory
+     * @return patient when persistence successful
+     */
     @Override
     public Patient create(@NonNull Patient patient) {
         log.debug("Call to patientDalService.createPatient");
