@@ -8,4 +8,5 @@ public interface IPatientDalService {
 
     Patient create(Patient patient);
     Collection<Patient> findAll();
+    Patient getPatient(int id);
 }

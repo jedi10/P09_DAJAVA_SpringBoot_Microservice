@@ -39,4 +39,14 @@ public class PatientDalServiceBean implements IPatientDalService {
         log.debug("Call to patientDalService.findAll");
         return patientRepository.findAll();
     }
+    /**
+     * <b>Get Patient with Id</b>
+     * @param id mandatory
+     * @return Patient
+     */
+    @Override
+    public Patient getPatient(int id) {
+        log.debug("Call to patientDalService.getPatient");
+        return patientRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+    }
 }

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,4 +83,21 @@ class PatientDalServiceBeanTest {
         assertTrue(patientResult.contains(patientGiven));
         verify(patientRepositoryMock, Mockito.times(1)).findAll();
     }
+
+    @Order(4)
+    @Test
+    void getPatient(){
+        //GIVEN
+        when(patientRepositoryMock.findById(ArgumentMatchers.anyInt())).thenReturn(java.util.Optional.ofNullable(patientGiven));
+
+        //WHEN
+        Patient patientResult = patientDalService.getPatient(3);
+
+        //THEN
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+        verify(patientRepositoryMock, Mockito.times(1)).findById(anyInt());
+    }
+
+
 }
