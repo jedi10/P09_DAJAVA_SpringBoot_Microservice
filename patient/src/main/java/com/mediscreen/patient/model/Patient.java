@@ -33,9 +33,9 @@ public class Patient {
         @Size(max=60, message = "{Patient.lastName.size}")
         private String lastname;
 
-        @Column(name = "birth_date", columnDefinition = "TIMESTAMP")
+        @Column(name = "birth_date", columnDefinition = "TIMESTAMP NULL DEFAULT NULL")
         @JsonFormat(pattern = "yyyy-MM-dd")
-        @NotNull(message = "{Patient.birthDay.mandatory}")
+        @NotBlank(message = "{Patient.birthDay.mandatory}")
         @Past(message = "{Patient.birthDay.past}")
         private LocalDate birthDate;
 
