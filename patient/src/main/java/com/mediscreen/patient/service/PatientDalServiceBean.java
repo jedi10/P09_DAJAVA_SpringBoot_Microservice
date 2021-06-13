@@ -2,6 +2,7 @@ package com.mediscreen.patient.service;
 
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,8 @@ public class PatientDalServiceBean implements IPatientDalService {
     }
 
     @Override
-    public Patient create(Patient patient) {
-        return null;
+    public Patient create(@NonNull Patient patient) {
+        log.debug("Call to patientDalService.createPatient");
+        return patientRepository.save(patient);
     }
 }
