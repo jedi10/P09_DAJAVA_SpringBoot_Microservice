@@ -1,7 +1,9 @@
 package com.mediscreen.patient.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -49,4 +51,22 @@ public class Patient {
         @NotBlank(message = "{Patient.phone.mandatory}")
         private String phone;
 
+        /**
+         * Constructor with params
+         * @param sex sex
+         * @param firstname firstname
+         * @param lastname lastname
+         * @param birthdate birthdate
+         * @param address address
+         * @param phone phone
+         */
+        public Patient(String sex, String firstname, String lastname, LocalDate birthdate, String address, String phone)
+        {
+                this.sex = sex;
+                this.firstname =  firstname;
+                this.lastname = lastname;
+                this.address= address;
+                this.phone = phone;
+                this.birthDate = birthdate;
+        }
 }
