@@ -34,8 +34,8 @@ class PatientDalServiceBeanTest {
 
     @BeforeAll
     void setUpAll(){
-        patientGiven = new Patient("M","firstname1_Test","lastname1_Test",
-                LocalDate.of(2020,5,19),"address1_Test","phone1_Test");
+        patientGiven = new Patient("M","Dmitri","Gloukhovski",
+                LocalDate.of(1979,6,12),"Moscou","phone1_Test");
     }
 
     @Order(1)
@@ -97,6 +97,21 @@ class PatientDalServiceBeanTest {
         assertNotNull(patientResult);
         assertEquals(patientGiven, patientResult);
         verify(patientRepositoryMock, Mockito.times(1)).findById(anyInt());
+    }
+
+    @Order(5)
+    @Test
+    void getPatientByLastName(){
+        //GIVEN
+        when(patientRepositoryMock.findByLastNameIgnoreCase(ArgumentMatchers.anyString())).thenReturn(java.util.Optional.ofNullable(patientGiven));
+
+        //WHEN
+        Patient patientResult = patientDalService.getPatientByLastName(patientGiven.getLastName());
+
+        //THEN
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+        verify(patientRepositoryMock, Mockito.times(1)).findByLastNameIgnoreCase(patientGiven.getLastName());
     }
 
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,6 +40,19 @@ public class PatientDalServiceBean implements IPatientDalService {
         log.debug("Call to patientDalService.findAll");
         return patientRepository.findAll();
     }
+
+    /**
+     * <b>Get Patient with LastName</b>
+     * @param lastName mandatory
+     * @return Patient
+     */
+    @Override
+    public Patient getPatientByLastName(String lastName) {
+        log.debug("Call to patientDalService.getPatientByLastName");
+        return patientRepository.findByLastNameIgnoreCase(lastName)
+                .orElseThrow(() -> new IllegalArgumentException("lastName not Found:" + lastName));
+    }
+
     /**
      * <b>Get Patient with Id</b>
      * @param id mandatory
@@ -47,6 +61,7 @@ public class PatientDalServiceBean implements IPatientDalService {
     @Override
     public Patient getPatient(int id) {
         log.debug("Call to patientDalService.getPatient");
-        return patientRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
     }
 }
