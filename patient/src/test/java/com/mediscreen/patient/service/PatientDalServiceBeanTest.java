@@ -3,6 +3,7 @@ package com.mediscreen.patient.service;
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,5 +40,18 @@ class PatientDalServiceBeanTest {
         assertNotNull(patientResult);
         assertEquals(patientGiven, patientResult);
         verify(patientRepositoryMock, Mockito.times(1)).save(patientGiven);
+    }
+
+    @Test
+    void create_withNull() {
+        //WHEN
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            patientDalService.create(null);
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("patient is marked non-null but is null"));
+        verify(patientRepositoryMock, Mockito.never()).save(ArgumentMatchers.any());
     }
 }
