@@ -1,5 +1,6 @@
 package com.mediscreen.patient.service;
 
+import com.mediscreen.patient.exception.PatientNotFoundException;
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
 import lombok.NonNull;
@@ -50,7 +51,7 @@ public class PatientDalServiceBean implements IPatientDalService {
     public Patient getPatientByLastName(String lastName) {
         log.debug("Call to patientDalService.getPatientByLastName");
         return patientRepository.findByLastNameIgnoreCase(lastName)
-                .orElseThrow(() -> new IllegalArgumentException("lastName not Found:" + lastName));
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with lastName:" + lastName));
     }
 
     /**
@@ -62,6 +63,6 @@ public class PatientDalServiceBean implements IPatientDalService {
     public Patient getPatient(int id) {
         log.debug("Call to patientDalService.getPatient");
         return patientRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with id:" + id));
     }
 }

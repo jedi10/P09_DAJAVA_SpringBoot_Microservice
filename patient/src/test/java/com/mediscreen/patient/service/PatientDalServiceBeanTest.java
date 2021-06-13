@@ -1,5 +1,6 @@
 package com.mediscreen.patient.service;
 
+import com.mediscreen.patient.exception.PatientNotFoundException;
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
 import org.junit.jupiter.api.*;
@@ -13,9 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -101,6 +104,23 @@ class PatientDalServiceBeanTest {
 
     @Order(5)
     @Test
+    void getPatient_notFound(){
+        //GIVEN
+        when(patientRepositoryMock.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.empty());
+
+        //WHEN
+        Exception exception = assertThrows(PatientNotFoundException.class, () -> {
+            patientDalService.getPatient(5);
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Patient not found with id"));
+        verify(patientRepositoryMock, Mockito.times(1)).findById(5);
+    }
+
+    @Order(6)
+    @Test
     void getPatientByLastName(){
         //GIVEN
         when(patientRepositoryMock.findByLastNameIgnoreCase(ArgumentMatchers.anyString())).thenReturn(java.util.Optional.ofNullable(patientGiven));
@@ -111,6 +131,23 @@ class PatientDalServiceBeanTest {
         //THEN
         assertNotNull(patientResult);
         assertEquals(patientGiven, patientResult);
+        verify(patientRepositoryMock, Mockito.times(1)).findByLastNameIgnoreCase(patientGiven.getLastName());
+    }
+
+    @Order(7)
+    @Test
+    void getPatientByLastName_notFound(){
+        //GIVEN
+        when(patientRepositoryMock.findByLastNameIgnoreCase(ArgumentMatchers.anyString())).thenReturn(Optional.empty());
+
+        //WHEN
+        Exception exception = assertThrows(PatientNotFoundException.class, () -> {
+            patientDalService.getPatientByLastName(patientGiven.getLastName());
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Patient not found with lastName"));
         verify(patientRepositoryMock, Mockito.times(1)).findByLastNameIgnoreCase(patientGiven.getLastName());
     }
 
