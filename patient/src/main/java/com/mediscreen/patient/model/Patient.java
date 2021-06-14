@@ -28,12 +28,12 @@ public class Patient {
         @Column(name="first_name", length=35, nullable = false)
         @Size(max=35, message="{Patient.firstName.size}")
         @NotBlank(message = "{Patient.firstName.mandatory}")
-        private String firstname;
+        private String firstName;
 
         @Column(name = "last_name", length=60, nullable = false)
         @NotBlank(message = "{Patient.lastName.mandatory}")
         @Size(max=60, message = "{Patient.lastName.size}")
-        private String lastname;
+        private String lastName;
 
         @Column(name = "birth_date", columnDefinition = "TIMESTAMP NULL DEFAULT NULL")
         @JsonFormat(pattern = "yyyy-MM-dd")
@@ -63,8 +63,8 @@ public class Patient {
         public Patient(String sex, String firstname, String lastname, LocalDate birthdate, String address, String phone)
         {
                 this.sex = sex;
-                this.firstname =  firstname;
-                this.lastname = lastname;
+                this.firstName =  firstname;
+                this.lastName = lastname;
                 this.address= address;
                 this.phone = phone;
                 this.birthDate = birthdate;
