@@ -1,13 +1,13 @@
 package com.mediscreen.patient.service;
 
 import com.mediscreen.patient.exception.PatientNotFoundException;
+import com.mediscreen.patient.exception.PatientUniquenessConstraintException;
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -29,7 +29,14 @@ public class PatientDalServiceBean implements IPatientDalService {
     @Override
     public Patient create(@NonNull Patient patient) {
         log.debug("Call to patientDalService.create");
-        return patientRepository.save(patient);
+        Optional<Patient> previousPatient = patientRepository
+                .findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(patient.getFirstName(), patient.getLastName(), patient.getBirthDate());
+        if (previousPatient.isPresent()){
+            log.debug("createPatient: uniqueness constraint violation: patient already present");
+            throw new PatientUniquenessConstraintException("Patient is already present");
+        } else {
+            return patientRepository.save(patient);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.mediscreen.patient.service;
 
 import com.mediscreen.patient.exception.PatientNotFoundException;
+import com.mediscreen.patient.exception.PatientUniquenessConstraintException;
 import com.mediscreen.patient.model.Patient;
 import com.mediscreen.patient.repository.PatientRepository;
 import org.junit.jupiter.api.*;
@@ -17,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,6 +59,30 @@ class PatientDalServiceBeanTest {
 
     @Order(2)
     @Test
+    void create_uniquenessConstraint() {
+        //GIVEN
+        when(patientRepositoryMock.save(patientGiven)).thenReturn(patientGiven);
+        when(patientRepositoryMock.findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+                .thenReturn(Optional.of(patientGiven));
+        verify(patientRepositoryMock, Mockito.never()).save(patientGiven);
+
+        //WHEN
+        Exception exception = assertThrows(PatientUniquenessConstraintException.class, () -> {
+            patientDalService.create(patientGiven);
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Patient is already present"));
+        verify(patientRepositoryMock, Mockito.never()).save(patientGiven);
+        verify(patientRepositoryMock, Mockito.times(1))
+                .findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                        patientGiven.getFirstName(),patientGiven.getLastName(),patientGiven.getBirthDate());
+    }
+
+    @Order(3)
+    @Test
     void create_withNull() {
         //WHEN
         Exception exception = assertThrows(NullPointerException.class, () -> {
@@ -71,7 +95,7 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.never()).save(ArgumentMatchers.any());
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     void findAll(){
         //GIVEN
@@ -87,7 +111,7 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.times(1)).findAll();
     }
 
-    @Order(4)
+    @Order(5)
     @Test
     void getPatient(){
         //GIVEN
@@ -102,7 +126,7 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.times(1)).findById(anyInt());
     }
 
-    @Order(5)
+    @Order(6)
     @Test
     void getPatient_notFound(){
         //GIVEN
@@ -119,7 +143,7 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.times(1)).findById(5);
     }
 
-    @Order(6)
+    @Order(7)
     @Test
     void getPatientByLastName(){
         //GIVEN
@@ -134,7 +158,7 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.times(1)).findByLastNameIgnoreCase(patientGiven.getLastName());
     }
 
-    @Order(7)
+    @Order(8)
     @Test
     void getPatientByLastName_notFound(){
         //GIVEN
