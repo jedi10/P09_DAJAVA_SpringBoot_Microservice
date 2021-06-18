@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static pl.pojo.tester.api.assertion.Assertions.assertPojoMethodsFor;
 import static pl.pojo.tester.api.assertion.Method.*;
+import static pl.pojo.tester.api.FieldPredicate.exclude;
 
 class PatientTest {
 
@@ -13,9 +14,11 @@ class PatientTest {
         //GIVEN
         final Class<?> classUnderTest = Patient.class;
         //WHEN-THEN
-        assertPojoMethodsFor(classUnderTest)
+        assertPojoMethodsFor(classUnderTest, exclude("id"))
                 .testing(HASH_CODE)
                 .testing(EQUALS)
+                .areWellImplemented();
+        assertPojoMethodsFor(classUnderTest)
                 .testing(SETTER)
                 .testing(GETTER)
                 .testing(CONSTRUCTOR)

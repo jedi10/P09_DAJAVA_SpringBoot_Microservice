@@ -104,7 +104,7 @@ class PatientControllerTest {
 
 
         mockMvc.perform(builder)//.andDo(print());
-                        .andExpect(status().isBadRequest());//HttpStatus.BAD_REQUEST 400
+                        .andExpect(status().isUnauthorized());//HttpStatus.BAD_REQUEST 401
 
         verify(patientDalServiceMock, Mockito.times(1)).create(patientGiven);
     }
