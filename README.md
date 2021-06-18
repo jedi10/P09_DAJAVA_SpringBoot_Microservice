@@ -2,7 +2,7 @@
 
 ## First Run
 
-Build project with Maven file _pom.xml_ to import all dependencies.
+Build each project with Maven file _pom.xml_ to import all dependencies.
     
     mvn package
     mvn clean install
@@ -11,8 +11,10 @@ Install a MySQL/Maria DBB like [Xampp](https://www.apachefriends.org/fr/index.ht
 
 ### BDD Configuration
 
-Configure the access to the database in *application.properties* file. 
-Execute the application once: on the first run, all tables will be build. 
+* Configure the access to the database in *application.properties* file.
+* Create two database: _mediscreen_ and _mediscreentest_.
+* Execute Patient application once: on the first run, all tables will be build in mediscreen.
+* Execute Patient test once: on the first run, all tables will be build in mediscreentest. 
     
 ## Resources
     

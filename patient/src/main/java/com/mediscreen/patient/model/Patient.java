@@ -3,6 +3,7 @@ package com.mediscreen.patient.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,8 +15,10 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Patient {
 
+        @EqualsAndHashCode.Exclude
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Integer id;
@@ -37,7 +40,7 @@ public class Patient {
 
         @Column(name = "birth_date", columnDefinition = "TIMESTAMP NULL DEFAULT NULL")
         @JsonFormat(pattern = "yyyy-MM-dd")
-        @NotBlank(message = "{Patient.birthDay.mandatory}")
+        //@NotBlank(message = "{Patient.birthDay.mandatory}")
         @Past(message = "{Patient.birthDay.past}")
         private LocalDate birthDate;
 
