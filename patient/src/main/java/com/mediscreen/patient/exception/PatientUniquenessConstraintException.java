@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)//, reason = "Patient already registered")
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED)//, reason = "Patient already registered")
 public class PatientUniquenessConstraintException extends RuntimeException{
 
     public PatientUniquenessConstraintException(String message) {
