@@ -38,5 +38,12 @@ The project use [Spring Boot 2.5.1](https://start.spring.io)
 
 All application End-Points can be find on one public html page (swagger):
 
-    http://localhost:8080/swagger-ui.html
+    http://localhost:8081/swagger-ui.html
 
+## Dockerization
+
+### for MySQL/Maria DBB
+
+    docker run -p 3306:3306 mariadb
+    
+[source](https://serverfault.com/questions/1019091/how-to-import-data-into-a-mariadb-instance-running-in-a-docker-container)
