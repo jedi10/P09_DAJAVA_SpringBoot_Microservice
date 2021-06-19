@@ -72,4 +72,16 @@ public class PatientDalServiceBean implements IPatientDalService {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found with id:" + id));
     }
+
+    @Override
+    public void deletePatient(int id) {
+        patientRepository.findById(id)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with id:" + id));
+        patientRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllPatients() {
+        patientRepository.deleteAll();
+    }
 }

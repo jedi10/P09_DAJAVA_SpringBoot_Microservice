@@ -10,4 +10,6 @@ public interface IPatientDalService {
     Collection<Patient> findAll();
     Patient getPatientByLastName(String lastName);
     Patient getPatient(int id);
+    void deletePatient(int id);
+    void deleteAllPatients();
 }
