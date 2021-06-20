@@ -1,5 +1,6 @@
 package com.mediscreen.ui.model;
 
+import com.mediscreen.ui.web.validation.HumanGender;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,7 @@ public class Patient {
 
     private Integer id;
 
+    @HumanGender(message = "{Patient.sex.choice}")
     @NotBlank(message = "{Patient.sex.mandatory}")
     @Size(min = 1, max = 1, message = "{Patient.sex.size}")
     private String sex;
