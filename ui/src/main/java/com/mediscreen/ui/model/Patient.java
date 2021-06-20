@@ -1,6 +1,7 @@
 package com.mediscreen.ui.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
+@NoArgsConstructor
 public class Patient {
 
     private Integer id;
@@ -28,6 +30,7 @@ public class Patient {
     private String lastName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "{Patient.birthDay.mandatory}")
     @Past(message = "{Patient.birthDay.past}")
     private LocalDate birthDate;

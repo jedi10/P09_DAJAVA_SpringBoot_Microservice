@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Add Patient</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
+</head>
+<body>
+<div class="container">
+
+    <div class="row">
+        <h2>Add New Patient</h2>
+    </div>
+
+    <div class="row">
+        <form action="#" th:action="@{/patient/validate}" th:object="${patient}" method="post" accept-charset="utf-8" class="form-horizontal" style="width: 100%">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <ol>
+                    <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                </ol>
+            </div>
+            <div class = "form-group row ">
+                <label for = "sex" class = "col-sm-2 col-form-label">Sex</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{sex}" id = "sex" type = "text" list="defaultGenders" class = "form-control" placeholder = "Mandatory">
+                    <datalist id="defaultGenders">
+                        <option value="M">
+                        <option value="F">
+                        <option value="T">
+                    </datalist>
+                    <p class="text-danger" th:if="${#fields.hasErrors('sex')}" th:errors="*{sex}"></p>
+                </div>
+            </div>
+            <div class = "form-group row ">
+                <label for = "firstName" class = "col-sm-2 col-form-label">FirstName</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{firstName}" id = "firstName" type = "text" class = "form-control" placeholder = "Mandatory">
+                    <p class="text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+                </div>
+            </div>
+            <div class = "form-group row ">
+                <label for = "lastName" class = "col-sm-2 col-form-label">LastName</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{lastName}" id = "lastName" type = "text" class = "form-control" placeholder = "Mandatory" required><!--pattern="[0-9]+"-->
+                    <p class="text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+                </div>
+            </div>
+            <div class = "form-group row ">
+                <label for = "birthDay" class = "col-sm-2 col-form-label">BirthDate</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{birthDate}" id = "birthDay" type = "date" class = "form-control" placeholder = "Mandatory" required>
+                    <p class="text-danger" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"></p>
+                </div>
+            </div>
+            <div class = "form-group row ">
+                <label for = "address" class = "col-sm-2 col-form-label">Address</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{address}" id = "address" type = "text" class = "form-control" placeholder = "Mandatory" required>
+                    <p class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
+                </div>
+            </div>
+            <div class = "form-group row ">
+                <label for = "phone" class = "col-sm-2 col-form-label">Phone</label>
+                <div class = "col-sm-4">
+                    <input th:field="*{phone}" id = "phone" type = "text" class = "form-control" placeholder = "Mandatory" required>
+                    <p class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+                </div>
+            </div>
+            <div class = "form-group row">
+                <div class = "col-sm-5">
+                    <button type = "submit" class = "btn btn-primary">Save data</button>
+                </div>
+                <div class = "col-sm-5">
+                    <a class="btn btn-danger" href="/patient/list">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
+
+<!--https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/number-->
