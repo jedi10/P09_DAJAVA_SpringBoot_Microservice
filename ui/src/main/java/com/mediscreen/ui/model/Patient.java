@@ -21,11 +21,11 @@ public class Patient {
 
     @Size(max=35, message="{Patient.firstName.size}")
     @NotBlank(message = "{Patient.firstName.mandatory}")
-    private String firstname;
+    private String firstName;
 
     @NotBlank(message = "{Patient.lastName.mandatory}")
     @Size(max=60, message = "{Patient.lastName.size}")
-    private String lastname;
+    private String lastName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "{Patient.birthDay.mandatory}")
@@ -39,5 +39,24 @@ public class Patient {
     @Size(max=20, message="{Patient.phone.size}")
     @NotBlank(message = "{Patient.phone.mandatory}")
     private String phone;
+
+    /**
+     * Constructor with params
+     * @param sex sex
+     * @param firstname firstname
+     * @param lastname lastname
+     * @param birthdate birthdate
+     * @param address address
+     * @param phone phone
+     */
+    public Patient(String sex, String firstname, String lastname, LocalDate birthdate, String address, String phone)
+    {
+        this.sex = sex;
+        this.firstName =  firstname;
+        this.lastName = lastname;
+        this.address= address;
+        this.phone = phone;
+        this.birthDate = birthdate;
+    }
 
 }
