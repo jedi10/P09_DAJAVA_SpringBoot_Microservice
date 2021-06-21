@@ -46,4 +46,28 @@ public class PatientRestService {
         }
     }
 
+    public Patient addPatient(Patient patient){
+        String logMessage = String.format("UI: call to %s.addPatient()",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s%s%s",
+                "http://localhost:",
+                8081,
+                patientURL,
+                "/add");
+        try {
+            ResponseEntity<Patient> responseEntity = restTemplate.postForEntity(
+                    httpUrl,
+                    patient,
+                    Patient.class);
+            return responseEntity.getBody();
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.addPatient: %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
+            return null;
+        }
+    }
+
 }

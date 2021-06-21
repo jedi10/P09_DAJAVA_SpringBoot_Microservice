@@ -68,4 +68,26 @@ class PatientRestServiceTest {
         assertTrue(patientListResult.size() == 1);
         assertEquals(patientListGiven.get(0), patientListResult.get(0));
     }
+
+    @Order(2)
+    @Test
+    void addPatient() throws JsonProcessingException {
+        //Given
+        Patient patientGiven = new Patient("M","Dmitri","Gloukhovski",
+                LocalDate.of(1979,6,12),"Moscou","phone1_Test");
+        patientGiven.setId(0);
+        String json = this.objectMapper
+                .writeValueAsString(patientGiven);
+        this.mockServer
+                .expect(requestTo("http://localhost:8081/patient/add"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Patient patientResult = patientRestService.addPatient(patientGiven);
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+    }
 }
