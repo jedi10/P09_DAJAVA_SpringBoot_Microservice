@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.util.Collection;
 
-@Api(tags = {"Patient Controller"})
-@Tag(name = "Patient Controller", description = "Patient Microservice Resources")
+@Api(tags = {"Microservice Patient Controller"})
+@Tag(name = "Microservice Patient Controller", description = "Patient Microservice Resources")
 @Slf4j
 @RestController
 @RequestMapping("/patient")
