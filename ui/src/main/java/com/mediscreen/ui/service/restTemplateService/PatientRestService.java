@@ -50,15 +50,16 @@ public class PatientRestService {
         String logMessage = String.format("UI: call to %s.getPatientById() ",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s%s%s",
+        String httpUrl = String.format("%s%s%s",
                 "http://localhost:",
                 8081,
-                patientURL,
-                "?id="+i);
-
+                patientURL);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", i);//?id=0
         try {
             ResponseEntity<Patient> responseEntity = restTemplate.getForEntity(
-                    httpUrl,
+                    uriComponentsBuilder.toUriString(),
                     Patient.class);
             return responseEntity.getBody();
         } catch (RestClientException exception) {
@@ -67,6 +68,29 @@ public class PatientRestService {
                     exception.getMessage());
             log.error(errorMessage);
             return null;
+        }
+    }
+
+    public void deletePatientById(int i) {
+        String logMessage = String.format("UI: call to %s.deletePatientById() ",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s%s",
+                "http://localhost:",
+                8081,
+                patientURL);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", i);//?id=0
+
+        try {
+            restTemplate.delete(
+                    uriComponentsBuilder.toUriString());
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.deletePatientById : %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
         }
     }
 

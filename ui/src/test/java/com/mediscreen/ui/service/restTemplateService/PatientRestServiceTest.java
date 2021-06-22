@@ -19,6 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(PatientRestService.class)
@@ -97,6 +98,25 @@ class PatientRestServiceTest {
     }
 
     @Order(3)
+    @Test
+    void deletePatientById() throws JsonProcessingException {
+        //Given
+        int idOnTest = 0;
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://localhost:8081/patient").
+                        queryParam("id", idOnTest);//?id=0
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withNoContent());
+        //WHEN
+        patientRestService.deletePatientById(idOnTest);
+
+        //THEN
+        this.mockServer.verify();
+    }
+
+    @Order(4)
     @Test
     void addPatient() throws JsonProcessingException {
         //Given
