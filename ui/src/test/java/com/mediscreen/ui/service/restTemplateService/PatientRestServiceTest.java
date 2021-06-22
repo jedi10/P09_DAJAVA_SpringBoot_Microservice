@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -70,6 +71,32 @@ class PatientRestServiceTest {
     }
 
     @Order(2)
+    @Test
+    void getPatientById() throws JsonProcessingException {
+        //Given
+        int idOnTest = 0;
+        Patient patientGiven = new Patient("M","Dmitri","Gloukhovski",
+                LocalDate.of(1979,6,12),"Moscou","phone1_Test");
+        patientGiven.setId(idOnTest);
+        String json = this.objectMapper
+                .writeValueAsString(patientGiven);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://localhost:8081/patient").
+                        queryParam("id", idOnTest);//?id=0
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Patient patientResult = patientRestService.getPatientById(idOnTest);
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+    }
+
+    @Order(3)
     @Test
     void addPatient() throws JsonProcessingException {
         //Given
