@@ -87,7 +87,7 @@ public class PatientController {
         return patientDalService.getPatient(id);
     }
 
-    @ApiOperation(value = "Get a Patient with lastName", response= Patient.class, notes= "/patient/familyName?familyName=23")
+    @ApiOperation(value = "Get a Patient with lastName", response= Patient.class, notes= "/patient/familyName?familyName=gloukhovski")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get the Patient with the supplied familyName"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
