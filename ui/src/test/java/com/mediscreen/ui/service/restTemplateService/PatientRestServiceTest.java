@@ -58,7 +58,7 @@ class PatientRestServiceTest {
         String json = this.objectMapper
                 .writeValueAsString(patientListGiven);
         this.mockServer
-                .expect(requestTo("http://localhost:8081/patient/"))
+                .expect(requestTo("http://patient:8081/patient/"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         //WHEN
@@ -82,7 +82,7 @@ class PatientRestServiceTest {
         String json = this.objectMapper
                 .writeValueAsString(patientGiven);
         UriComponentsBuilder uriComponentsBuilder =
-                UriComponentsBuilder.fromHttpUrl("http://localhost:8081/patient").
+                UriComponentsBuilder.fromHttpUrl("http://patient:8081/patient").
                         queryParam("id", idOnTest);//?id=0
         this.mockServer
                 .expect(requestTo(uriComponentsBuilder.toUriString()))
@@ -103,7 +103,7 @@ class PatientRestServiceTest {
         //Given
         int idOnTest = 0;
         UriComponentsBuilder uriComponentsBuilder =
-                UriComponentsBuilder.fromHttpUrl("http://localhost:8081/patient").
+                UriComponentsBuilder.fromHttpUrl("http://patient:8081/patient").
                         queryParam("id", idOnTest);//?id=0
         this.mockServer
                 .expect(requestTo(uriComponentsBuilder.toUriString()))
@@ -126,7 +126,7 @@ class PatientRestServiceTest {
         String json = this.objectMapper
                 .writeValueAsString(patientGiven);
         this.mockServer
-                .expect(requestTo("http://localhost:8081/patient/add"))
+                .expect(requestTo("http://patient:8081/patient/add"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         //WHEN

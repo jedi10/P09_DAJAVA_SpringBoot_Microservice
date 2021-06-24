@@ -20,15 +20,15 @@ public class PatientRestService {
     RestTemplate restTemplate;
 
     public static final String className = PatientRestService.class.getSimpleName();
+    public static final String patientDockerURI = "http://patient:8081";
     public static final String patientURL = "/patient";
 
     public List<Patient> getPatientList() {
         String logMessage = String.format("UI: call to %s.getPatientList()",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s%s%s",
-                "http://localhost:",
-                8081,
+        String httpUrl = String.format("%s%s%s",
+                patientDockerURI,
                 patientURL,
                 "/");
 
@@ -50,9 +50,8 @@ public class PatientRestService {
         String logMessage = String.format("UI: call to %s.getPatientById() ",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s%s",
-                "http://localhost:",
-                8081,
+        String httpUrl = String.format("%s%s",
+                patientDockerURI,
                 patientURL);
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
@@ -75,9 +74,8 @@ public class PatientRestService {
         String logMessage = String.format("UI: call to %s.deletePatientById() ",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s%s",
-                "http://localhost:",
-                8081,
+        String httpUrl = String.format("%s%s",
+                patientDockerURI,
                 patientURL);
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
@@ -98,9 +96,8 @@ public class PatientRestService {
         String logMessage = String.format("UI: call to %s.addPatient()",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s%s%s",
-                "http://localhost:",
-                8081,
+        String httpUrl = String.format("%s%s%s",
+                patientDockerURI,
                 patientURL,
                 "/add");
         try {
