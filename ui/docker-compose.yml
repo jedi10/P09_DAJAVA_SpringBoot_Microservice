@@ -1,0 +1,72 @@
+version : "3.8"
+services :
+  ui :
+    image: ui
+    build :
+      context: ./
+      dockerfile: ./dockerfile
+    container_name: ui
+    ports :
+      - "8091:8091"
+    networks:
+      - default
+    depends_on:
+      patient:
+        condition: service_started
+
+  patient:
+    image : patient
+    build :
+      context: ../patient
+      dockerfile: ../patient/dockerfile
+    container_name: patient
+    ports :
+      - "8081:8081"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  mariadb:
+    image: mariadb:10.5.5
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: passdb
+      MYSQL_PASSWORD: passdb
+      MYSQL_USER: root
+      MYSQL_DATABASE: mediscreen
+      TZ: "Europe/Paris"
+    ports:
+      - "3306:3306"
+    healthcheck:
+      #disable: true
+      #test: ["NONE"]
+      #test: docker inspect mariadb
+      test: ["CMD-SHELL", 'mysql --database=mediscreen --password=passdb --execute="SELECT 1 + 1" --skip-column-names -B']
+      #test: [CMD mysql --user=root --password=passdb -e \"show databases;\"]
+      #test: [ 'CMD', 'mysqladmin', 'ping', '-u', 'root', 'passdb' ]
+      #test: ["CMD", "curl", "-f", "--user=root", "--password=passdb", "http://mariadb:3306"]
+      #test: "/usr/bin/mysql --user=root --password=passdb --execute \"SHOW DATABASES;\""
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+
+#https://forums.docker.com/t/using-a-database-defined-in-external-compose-file/93869/2
+#https://stefanscherer.github.io/run-linux-and-windows-containers-on-windows-10/
+#https://howchoo.com/devops/how-to-add-a-health-check-to-your-docker-container
+#healthcheck https://scoutapm.com/blog/how-to-use-docker-healthcheck
+  #Interval - specifies the time between the health check for the application container. it waits for the specified time from one check to another.
+  #Timeout - specifies the time that the health check waits for a response to consider the status of the container. For example, if we define 30 seconds and our server doesn’t respond within 30 seconds, then it’s considered as failed.
+  #Start-period - specifies the number of seconds the container needs to start; health check will wait for that time to start.
+  #Retries - specifies the number of consecutive health check failures required to declare the container status as unhealthy. Health check will only try up to the specified retry number. If the server fails consecutively up to the specified times, it is then considered unhealthy.
+#https://marcopeg.com/2019/docker-compose-healthcheck
+#https://warlord0blog.wordpress.com/2021/03/04/docker-compose-healthcheck/
+#https://kuttler.eu/code/docker-compose-mariadb-mysql-healthcheck/
+#https://kifarunix.com/install-and-run-mariadb-as-a-docker-container/
+#https://hevodata.com/learn/mariadb-docker/
+#docker search mariadb
+#https://mariadb.com/kb/en/installing-and-using-mariadb-via-docker/
+#docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb
+#https://learntubes.com/how-to-install-mariadb-using-docker-compose
+#https://onexlab-io.medium.com/docker-compose-mariadb-5eb7a37426a2

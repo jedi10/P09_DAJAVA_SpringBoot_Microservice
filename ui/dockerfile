@@ -1,12 +1,10 @@
-
-
 # https://hub.docker.com/_/openjdk
 FROM openjdk:11
 #LABEL administrator="kyle10_dev@outlook.fr"
-EXPOSE 8081:8081
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} mediscreen-patient.jar
-ENTRYPOINT ["java","-jar","/mediscreen-patient.jar"]
+EXPOSE 8091:8091
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} mediscreen-ui.jar
+ENTRYPOINT ["java","-jar","/mediscreen-ui.jar"]
 
 
 # https://mkyong.com/docker/docker-and-java-application-examples/
