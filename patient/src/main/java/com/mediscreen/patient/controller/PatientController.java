@@ -45,7 +45,7 @@ public class PatientController {
                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dob,
                               @RequestParam String sex, @RequestParam String address, @RequestParam String phone,
                               HttpServletRequest request, HttpServletResponse response) throws PatientUniquenessConstraintException {
-        log.info("Patient Microservice: addPatient EndPoint: URI= '{}' : RESPONSE STATUS= '{}'",
+        log.info("Patient Microservice: addPatient EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         Patient patient = new Patient(sex, given, family, dob, address, phone);
@@ -63,7 +63,7 @@ public class PatientController {
     )
     @GetMapping("/")
     public Collection<Patient> getAllPatients(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Patient Microservice: getAllPatients EndPoint: URI= '{}' : RESPONSE STATUS= '{}'",
+        log.info("Patient Microservice: getAllPatients EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         return patientDalService.findAll();
@@ -81,7 +81,7 @@ public class PatientController {
     @GetMapping()
     public Patient getPatient(@RequestParam Integer id,
                               HttpServletRequest request, HttpServletResponse response) throws PatientNotFoundException {
-        log.info("Patient Microservice: getPatient with id EndPoint: URI= '{}' : RESPONSE STATUS= '{}'",
+        log.info("Patient Microservice: getPatient with id EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         return patientDalService.getPatient(id);
@@ -99,7 +99,7 @@ public class PatientController {
     @GetMapping("/familyName")
     public Patient getPatientByFamilyName(@RequestParam String familyName,
                                           HttpServletRequest request, HttpServletResponse response) throws PatientNotFoundException {
-        log.info("Patient Microservice: getPatient with lastName EndPoint: URI= '{}' : RESPONSE STATUS= '{}'",
+        log.info("Patient Microservice: getPatient with lastName EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         return patientDalService.getPatientByLastName(familyName);
@@ -117,7 +117,7 @@ public class PatientController {
     @DeleteMapping("")
     public void deletePatientById(@RequestParam Integer id,
                                           HttpServletRequest request, HttpServletResponse response) throws PatientNotFoundException {
-        log.info("Patient Microservice: deletePatient with id EndPoint: URI= '{}' : RESPONSE STATUS= '{}'",
+        log.info("Patient Microservice: deletePatient with id EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         patientDalService.deletePatient(id);

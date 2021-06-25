@@ -23,7 +23,7 @@ public class PatientRestService {
     public static final String patientDockerURI = "http://patient:8081";
     public static final String patientURL = "/patient";
 
-    public List<Patient> getPatientList() {
+    public List<Patient> getList() {
         String logMessage = String.format("UI: call to %s.getPatientList()",
                 className);
         log.debug(logMessage);
@@ -46,7 +46,7 @@ public class PatientRestService {
         }
     }
 
-    public Patient getPatientById(int i) {
+    public Patient getById(int i) {
         String logMessage = String.format("UI: call to %s.getPatientById() ",
                 className);
         log.debug(logMessage);
@@ -70,7 +70,7 @@ public class PatientRestService {
         }
     }
 
-    public void deletePatientById(int i) {
+    public void deleteById(int i) {
         String logMessage = String.format("UI: call to %s.deletePatientById() ",
                 className);
         log.debug(logMessage);
@@ -92,7 +92,7 @@ public class PatientRestService {
         }
     }
 
-    public Patient addPatient(Patient patient){
+    public Patient add(Patient patient){
         String logMessage = String.format("UI: call to %s.addPatient()",
                 className);
         log.debug(logMessage);
@@ -100,10 +100,18 @@ public class PatientRestService {
                 patientDockerURI,
                 patientURL,
                 "/add");
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl)
+                        .queryParam("family", patient.getLastName())
+                        .queryParam("given", patient.getFirstName())
+                        .queryParam("dob", patient.getBirthDate())
+                        .queryParam("sex", patient.getSex())
+                        .queryParam("address", patient.getAddress())
+                        .queryParam("phone", patient.getPhone());
         try {
             ResponseEntity<Patient> responseEntity = restTemplate.postForEntity(
-                    httpUrl,
-                    patient,
+                    uriComponentsBuilder.toUriString(),
+                    null,
                     Patient.class);
             return responseEntity.getBody();
         } catch (RestClientException exception) {

@@ -1,6 +1,7 @@
 package com.mediscreen.ui.controller;
 
 import com.mediscreen.ui.model.Patient;
+import com.mediscreen.ui.service.restTemplateService.PatientRestService;
 import com.mediscreen.ui.tool.Snippets;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +35,11 @@ import java.util.stream.Collectors;
 public class PatientController {
 
     private static List<Patient> patientList = new ArrayList<>();
+
+    @Autowired
+    private PatientRestService patientRestService;
+
+    private Boolean localMode = false;
 
     static {
         patientList.add(new Patient("M","Dmitri","Gloukhovski",
@@ -54,10 +60,14 @@ public class PatientController {
     )
     @GetMapping(value = "list")
     public String list(Model model, HttpServletRequest request, HttpServletResponse response){
-        log.info("UI: Get Patient List on URI: '{}' : RESPONSE STATUS: '{}'",
+        log.info("UI: Get Patient List on URL: '{}' : RESPONSE STATUS: '{}'",
                 request.getRequestURI(),
                 response.getStatus());
-        model.addAttribute("patients", PatientController.patientList);
+        if (localMode){
+            model.addAttribute("patients", PatientController.patientList);
+        } else {
+            model.addAttribute("patients", patientRestService.getList());
+        }
         return "patient/list";
     }
 
@@ -74,7 +84,7 @@ public class PatientController {
     public String addPatientForm(Model model,
                              HttpServletRequest request, HttpServletResponse response) {
         model.addAttribute("patient", new Patient());
-        log.info("UI: load Patient Form on URI: '{}' : RESPONSE STATUS: '{}'",
+        log.info("UI: load Patient Form on URL: '{}' : RESPONSE STATUS: '{}'",
                 request.getRequestURI(),
                 response.getStatus());
         return "patient/add";
@@ -95,7 +105,7 @@ public class PatientController {
                            Model model,
                            HttpServletRequest request, HttpServletResponse response) {
         if (result.hasErrors()) {
-            log.warn("Patient Creation Error on URI: '{}': Error Field(s): '{}' : RESPONSE STATUS: '{}'",
+            log.warn("UI: Patient Creation Error on URL: '{}': Error Field(s): '{}' : RESPONSE STATUS: '{}'",
                     request.getRequestURI(),
                     result.getFieldErrors().stream()
                             .map(e-> e.getField().toUpperCase())
@@ -104,16 +114,26 @@ public class PatientController {
                     response.getStatus());
             return "patient/add";
         }
-
-        Patient patientCreated = patient;
-        patientCreated.setId(Snippets.getRandomNumberInRange(2,1000));
-        PatientController.patientList.add(patientCreated);
-        log.info("UI: Patient Creation on URI: '{}' : Patient Created '{}' : RESPONSE STATUS: '{}'",
+        Patient patientCreated = null;
+        if (localMode){
+            patientCreated = patient;
+            patientCreated.setId(Snippets.getRandomNumberInRange(2,1000));
+            PatientController.patientList.add(patientCreated);
+            model.addAttribute("patients", PatientController.patientList);
+        } else {
+            try {
+                patientCreated = patientRestService.add(patient);
+                model.addAttribute("patients", patientRestService.getList());
+            } catch (Exception e) {
+                model.addAttribute("errorAddingPatient", e.getMessage());
+                return "patient/add";
+            }
+        }
+        log.info("UI: Patient Creation on URL: '{}' : Patient Created '{}' : RESPONSE STATUS: '{}'",
                 request.getRequestURI(),
                 patientCreated.getId() + " " + patientCreated.getLastName(),
                 response.getStatus());
 
-        model.addAttribute("patients", PatientController.patientList);
         return "patient/list";
     }
 
@@ -130,35 +150,34 @@ public class PatientController {
     public String deletePatient(@PathVariable("id") Integer id, Model model,
                                 HttpServletRequest request, HttpServletResponse response) {
         Optional<Patient> found = Optional.empty();
-        for (Patient e : PatientController.patientList) {
-            if (e.getId().equals(id)) {
-                found = Optional.of(e);
-                break;
+        if (localMode){
+            for (Patient e : PatientController.patientList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()){
+                Patient patientToRemove =  found.get();
+                PatientController.patientList.remove(patientToRemove);
+                log.info("UI: Delete Patient on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            }
+            model.addAttribute("patients", PatientController.patientList);
+        } else {
+            Patient patientResult = patientRestService.getById(id);
+            if(patientResult != null){
+                patientRestService.deleteById(id);
+                log.info("UI: Delete Patient on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            } else {
+                log.warn("UI: No Patient was deleted on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
             }
         }
-        if (found.isPresent()){
-            Patient patientToRemove =  found.get();
-            PatientController.patientList.remove(patientToRemove);
-            log.info("Delete Patient on URI: '{}' : RESPONSE STATUS: '{}'",
-                    request.getRequestURI(),
-                    response.getStatus());
-        }
-
-
-        /**
-        Optional<Patient> patientOptional = PatientRepository.findById(id);
-        if(patientOptional.isPresent()){
-            patientRepository.deleteById(id);
-            log.info("Delete Patient on URI: '{}' : RESPONSE STATUS: '{}'",
-                    request.getRequestURI(),
-                    response.getStatus());
-        } else {
-            log.warn("No Patient was deleted on URI: '{}' : RESPONSE STATUS: '{}'",
-                    request.getRequestURI(),
-                    response.getStatus());
-        }*/
-
-        model.addAttribute("patients", PatientController.patientList);
         return "patient/list";
     }
 

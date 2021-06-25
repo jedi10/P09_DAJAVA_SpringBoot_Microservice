@@ -62,7 +62,7 @@ class PatientRestServiceTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         //WHEN
-        List<Patient> patientListResult = patientRestService.getPatientList();
+        List<Patient> patientListResult = patientRestService.getList();
 
         //THEN
         this.mockServer.verify();
@@ -89,7 +89,7 @@ class PatientRestServiceTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         //WHEN
-        Patient patientResult = patientRestService.getPatientById(idOnTest);
+        Patient patientResult = patientRestService.getById(idOnTest);
 
         //THEN
         this.mockServer.verify();
@@ -110,7 +110,7 @@ class PatientRestServiceTest {
                 .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withNoContent());
         //WHEN
-        patientRestService.deletePatientById(idOnTest);
+        patientRestService.deleteById(idOnTest);
 
         //THEN
         this.mockServer.verify();
@@ -125,12 +125,20 @@ class PatientRestServiceTest {
         patientGiven.setId(0);
         String json = this.objectMapper
                 .writeValueAsString(patientGiven);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://patient:8081/patient/add")
+                        .queryParam("family", patientGiven.getLastName())
+                        .queryParam("given", patientGiven.getFirstName())
+                        .queryParam("dob", patientGiven.getBirthDate())
+                        .queryParam("sex", patientGiven.getSex())
+                        .queryParam("address", patientGiven.getAddress())
+                        .queryParam("phone", patientGiven.getPhone());
         this.mockServer
-                .expect(requestTo("http://patient:8081/patient/add"))
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
         //WHEN
-        Patient patientResult = patientRestService.addPatient(patientGiven);
+        Patient patientResult = patientRestService.add(patientGiven);
 
         //THEN
         this.mockServer.verify();
