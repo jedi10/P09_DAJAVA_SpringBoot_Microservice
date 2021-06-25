@@ -32,8 +32,8 @@ services :
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: passdb
-      MYSQL_PASSWORD: passdb
-      MYSQL_USER: root
+      MYSQL_PASSWORD: pass
+      MYSQL_USER: anna
       MYSQL_DATABASE: mediscreen
       TZ: "Europe/Paris"
     ports:
