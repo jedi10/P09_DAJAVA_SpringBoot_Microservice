@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Collection;
 
@@ -48,7 +51,13 @@ public class PatientController {
         log.info("Patient Microservice: addPatient EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
-        Patient patient = new Patient(sex, given, family, dob, address, phone);
+        Patient patient = new Patient(sex,
+                URLDecoder.decode(given, StandardCharsets.UTF_8),
+                URLDecoder.decode(family, StandardCharsets.UTF_8),
+                dob,
+                URLDecoder.decode(address, StandardCharsets.UTF_8),
+                URLDecoder.decode(phone, StandardCharsets.UTF_8));
+
         return patientDalService.create(patient);
     }
 
@@ -65,11 +74,16 @@ public class PatientController {
     public Patient updatePatient(@RequestParam Integer id, @RequestParam String family, @RequestParam String given,
                               @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dob,
                               @RequestParam String sex, @RequestParam String address, @RequestParam String phone,
-                              HttpServletRequest request, HttpServletResponse response) throws PatientUniquenessConstraintException {
+                              HttpServletRequest request, HttpServletResponse response) throws PatientUniquenessConstraintException, UnsupportedEncodingException {
         log.info("Patient Microservice: updatePatient EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
                 request.getRequestURI(),
                 response.getStatus());
-        Patient patient = new Patient(sex, given, family, dob, address, phone);
+        Patient patient = new Patient(sex,
+                URLDecoder.decode(given, StandardCharsets.UTF_8),
+                URLDecoder.decode(family, StandardCharsets.UTF_8),
+                dob,
+                URLDecoder.decode(address, StandardCharsets.UTF_8),
+                URLDecoder.decode(phone, StandardCharsets.UTF_8));
         patient.setId(id);
         return patientDalService.update(patient);
     }
@@ -149,4 +163,5 @@ public class PatientController {
 }
 
 
+//Fix %20 param with ULDecoder.decode(string, "UTF-8"); https://stackoverflow.com/questions/15235400/java-url-param-replace-20-with-space
 //https://medium.com/swlh/restful-api-documentation-made-easy-with-swagger-and-openapi-6df7f26dcad
