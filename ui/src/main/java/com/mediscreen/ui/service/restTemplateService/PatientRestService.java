@@ -1,5 +1,6 @@
 package com.mediscreen.ui.service.restTemplateService;
 
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.model.Patient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new NotFoundException(errorMessage);
         }
     }
 

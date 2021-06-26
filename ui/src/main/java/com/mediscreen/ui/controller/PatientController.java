@@ -1,5 +1,6 @@
 package com.mediscreen.ui.controller;
 
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.model.Patient;
 import com.mediscreen.ui.service.restTemplateService.PatientRestService;
 import com.mediscreen.ui.tool.Snippets;
@@ -39,7 +40,7 @@ public class PatientController {
     @Autowired
     private PatientRestService patientRestService;
 
-    private Boolean localMode = false;
+    private Boolean localMode = true;
 
     static {
         patientList.add(new Patient("M","Dmitri","Gloukhovski",
@@ -135,6 +136,97 @@ public class PatientController {
                 response.getStatus());
 
         return "patient/list";
+    }
+
+    @ApiOperation(value = "Show Form to update a Patient", response = String.class, notes = "Show a filled form to update a Patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully show form to update a Patient"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient update form"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @GetMapping("update/{id}")
+    public String updatePatientForm(@PathVariable("id") Integer id, Model model,
+                                    HttpServletRequest request, HttpServletResponse response) {
+        if (localMode){
+            Optional<Patient> found = Optional.empty();
+            for (Patient e : PatientController.patientList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()){
+                Patient patientToUpdate =  found.get();
+                model.addAttribute("patient", patientToUpdate);
+                log.info("UI: Show Update Patient Form on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            }
+        } else {
+            try {
+                Patient patient = patientRestService.getById(id);
+                model.addAttribute("patient", patient);
+            }
+            catch (NotFoundException patientNotFoundException)
+            {
+                model.addAttribute("errorUpdatingPatient", patientNotFoundException.getMessage());
+                model.addAttribute("patient", new Patient());
+            }
+        }
+        return "patient/update";
+    }
+
+    @PostMapping("update/{id}")
+    public String updatePatient(@PathVariable("id") Integer id, @Valid Patient patient, BindingResult result, Model model,
+                                HttpServletRequest request, HttpServletResponse response) {
+        if (result.hasErrors()) {
+            log.warn("UI: Patient Update Error on URL: '{}': Error Field(s): '{}' : RESPONSE STATUS: '{}'",
+                    request.getRequestURI(),
+                    result.getFieldErrors().stream()
+                            .map(e-> e.getField().toUpperCase())
+                            .distinct()
+                            .collect(Collectors.joining(", ")),
+                    response.getStatus());
+            return "patient/update";
+        }
+
+        if(localMode){
+            Optional<Patient> found = Optional.empty();
+            for (Patient e : PatientController.patientList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()) {
+                Patient patientToUpdate = found.get();
+                int index = PatientController.patientList.indexOf(patientToUpdate);
+                PatientController.patientList.set(index, patient);
+                log.info("Patient Update on URL: '{}' : Patient Updated '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        patient.getId() + " " + patient.getLastName(),
+                        response.getStatus());
+                model.addAttribute("patients", PatientController.patientList);
+            }
+        } else {
+            /**
+            try {
+                Patient patientUpdated = patientRestService.updatePatient(patient.getId(), patient.getLastname(), patient.getFirstname(), patient.getBirthDate(), patient.getSex(), patient.getAddress(), patient.getPhone());
+                log.info("Patient Update on URL: '{}' : Patient Updated '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        patientUpdated.getId() + " " + patientUpdated.getLastName(),
+                        response.getStatus());
+                model.addAttribute("patients", patientRestService.getList());
+                return "redirect:/patient/list";
+            } catch (Exception exception) {
+                model.addAttribute("errorUpdatingPatient", exception.getMessage());
+                return "patient/update";
+            }**/
+        }
+        return "redirect:/patient/list";
     }
 
     @ApiOperation(value = "Delete specific Patient with the supplied Patient id", notes= "/patient/delete/23")
