@@ -45,7 +45,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new PatientCrudException(errorMessage);
         }
     }
 
@@ -92,6 +92,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
+            throw new PatientCrudException(errorMessage);
         }
     }
 
@@ -122,7 +123,10 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new PatientCrudException(errorMessage);
+        }
+    }
+
     public Patient update(Patient patient){
         String logMessage = String.format("UI: call to %s.updatePatient()",
                 className);

@@ -68,7 +68,12 @@ public class PatientController {
         if (localMode){
             model.addAttribute("patients", PatientController.patientList);
         } else {
-            model.addAttribute("patients", patientRestService.getList());
+            try {
+                List<Patient> patients = patientRestService.getList();
+                model.addAttribute("patients", patients);
+            } catch (PatientCrudException e) {
+                model.addAttribute("errorListingPatients", e.getMessage());
+            }
         }
         return "patient/list";
     }
@@ -126,7 +131,7 @@ public class PatientController {
             try {
                 patientCreated = patientRestService.add(patient);
                 model.addAttribute("patients", patientRestService.getList());
-            } catch (Exception e) {
+            } catch (PatientCrudException e) {
                 model.addAttribute("errorAddingPatient", e.getMessage());
                 return "patient/add";
             }
@@ -258,24 +263,21 @@ public class PatientController {
             }
             model.addAttribute("patients", PatientController.patientList);
         } else {
-            Patient patientResult = patientRestService.getById(id);
-            if(patientResult != null){
+
+            Patient patientResult = null;
+            try {
+                patientResult = patientRestService.getById(id);
                 patientRestService.deleteById(id);
                 log.info("UI: Delete Patient on URL: '{}' : RESPONSE STATUS: '{}'",
                         request.getRequestURI(),
                         response.getStatus());
-            } else {
+            } catch (NotFoundException e) {
                 log.warn("UI: No Patient was deleted on URL: '{}' : RESPONSE STATUS: '{}'",
                         request.getRequestURI(),
                         response.getStatus());
+                model.addAttribute("errorListingPatients", e.getMessage());
             }
         }
         return "patient/list";
     }
-
-
-
-
-
-
 }

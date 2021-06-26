@@ -22,6 +22,8 @@
     <div class="row">
         <a href="/patient/add" class="btn btn-primary btn-sm">Add New</a>
         <h3 th:if="${#lists.isEmpty(patients)}">No patients yet!</h3>
+        <p class="text-danger" th:if="${!#strings.isEmpty(errorListingPatients)}" th:text="${errorListingPatients}"></p>
+
         <table th:unless="${#lists.isEmpty(patients)}" class="table table-bordered">
             <thead>
             <tr>
