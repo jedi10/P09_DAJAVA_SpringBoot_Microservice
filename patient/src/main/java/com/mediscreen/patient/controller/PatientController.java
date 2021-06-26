@@ -52,6 +52,28 @@ public class PatientController {
         return patientDalService.create(patient);
     }
 
+    @ApiOperation(value = "Update a Patient", response = Patient.class, notes = "/patient/update?id=1&family=Gloukhovski&given=Dmitri&dob=1979-06-12&sex=M&address=Moscou&phone=987654321")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully update a new Patient"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to update this Patient"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @PutMapping("/update")
+    public Patient updatePatient(@RequestParam Integer id, @RequestParam String family, @RequestParam String given,
+                              @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dob,
+                              @RequestParam String sex, @RequestParam String address, @RequestParam String phone,
+                              HttpServletRequest request, HttpServletResponse response) throws PatientUniquenessConstraintException {
+        log.info("Patient Microservice: updatePatient EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                request.getRequestURI(),
+                response.getStatus());
+        Patient patient = new Patient(sex, given, family, dob, address, phone);
+        patient.setId(id);
+        return patientDalService.update(patient);
+    }
+
     @ApiOperation(value = "Get List of Patient", response= Collection.class)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully get a list of Patient"),

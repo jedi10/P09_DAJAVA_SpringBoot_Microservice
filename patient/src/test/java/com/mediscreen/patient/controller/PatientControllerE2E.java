@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -176,6 +175,42 @@ class PatientControllerE2E {
     }
 
     @Order(5)
+    @Test
+    void updatePatient() {
+        //GIVEN
+        String urlTemplate = this.rootUrl + port + "/patient/update";
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(urlTemplate)
+                        .queryParam("id", patientGiven.getId().toString())
+                        .queryParam("family", patientGiven.getLastName())
+                        .queryParam("given", patientGiven.getFirstName())
+                        .queryParam("dob", patientGiven.getBirthDate())
+                        .queryParam("sex", patientGiven.getSex())
+                        .queryParam("address", patientGiven.getAddress())
+                        .queryParam("phone", "987654321");
+
+        HttpEntity<Patient> requestEntity = new HttpEntity<>(null, headers);
+
+        //***********WHEN*************
+        ResponseEntity<Patient> result = template.exchange(
+                uriComponentsBuilder.toUriString(),
+                HttpMethod.PUT,
+                requestEntity,
+                Patient.class);
+        //**************THEN***************
+        assertNotNull(result);
+        assertEquals(HttpStatus.OK, result.getStatusCode());//200
+        assertNotNull(result.getBody());
+        //*********************************************************
+        //**************CHECK RESPONSE CONTENT*********************
+        //*********************************************************
+        Patient patientResult = result.getBody();
+        assertNotNull(patientResult);
+        assertNotEquals(patientGiven.getPhone(), patientResult.getPhone());
+        assertEquals(patientGiven.getId(), patientResult.getId());
+    }
+
+    @Order(6)
     @Test
     void deletePatientById() {
         //GIVEN

@@ -203,6 +203,38 @@ class PatientControllerTest {
         String expectedJson = objectMapper.writeValueAsString(patientGiven);
         JSONAssert.assertEquals(expectedJson, jsonResult, true);
     }
+
+    @Order(7)
+    @Test
+    void updatePatient() throws Exception {
+        //GIVEN
+        patientGiven.setId(1);
+        when(patientDalServiceMock.update(patientGiven)).thenReturn(patientGiven);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/patient/update").
+                contentType(MediaType.APPLICATION_JSON)
+                .param("id", patientGiven.getId().toString())
+                .param("family", patientGiven.getLastName())
+                .param("sex",patientGiven.getSex())
+                .param("given",patientGiven.getFirstName())
+                .param("dob",patientGiven.getBirthDate().toString())
+                .param("address",patientGiven.getAddress())
+                .param("phone",patientGiven.getPhone());
+
+        MvcResult mvcResult =
+                mockMvc.perform(builder)//.andDo(print());
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn();
+
+        verify(patientDalServiceMock, Mockito.times(1)).update(patientGiven);
+        //*********************************************************
+        //**************CHECK RESPONSE CONTENT*********************
+        //*********************************************************
+        String jsonResult = mvcResult.getResponse().getContentAsString();
+        String expectedJson = objectMapper.writeValueAsString(patientGiven);
+        JSONAssert.assertEquals(expectedJson, jsonResult, true);
+    }
 }
 
 

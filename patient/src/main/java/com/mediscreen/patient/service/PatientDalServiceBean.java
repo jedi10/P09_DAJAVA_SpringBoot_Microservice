@@ -39,6 +39,25 @@ public class PatientDalServiceBean implements IPatientDalService {
         }
     }
 
+    @Override
+    public Patient update(Patient patient) {
+        log.debug("Call to patientDalService.update");
+        patientRepository.findById(patient.getId())
+                .orElseThrow(() -> {
+                            log.debug("updatePatient: patient not present");
+                            return new PatientNotFoundException("Patient not found with id:" + patient.getId()+ ": update impossible");
+                        });
+        Optional<Patient> previousPatient = patientRepository
+                .findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(patient.getFirstName(), patient.getLastName(), patient.getBirthDate());
+
+        if (previousPatient.isPresent() && !previousPatient.get().getId().equals(patient.getId())) {
+            log.debug("updatePatient : Patient with same firstname, lastname and birthdate already exist");
+            throw new PatientUniquenessConstraintException("Patient with same firstname, lastname and birthdate already exist: update impossible");
+        } else {
+            return patientRepository.save(patient);
+        }
+    }
+
     /**
      * <b>Give all Patients</b>
      * @return a collection of patients
