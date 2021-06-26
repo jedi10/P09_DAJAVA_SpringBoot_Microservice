@@ -1,6 +1,7 @@
 package com.mediscreen.ui.controller;
 
 import com.mediscreen.ui.exception.NotFoundException;
+import com.mediscreen.ui.exception.PatientCrudException;
 import com.mediscreen.ui.model.Patient;
 import com.mediscreen.ui.service.restTemplateService.PatientRestService;
 import com.mediscreen.ui.tool.Snippets;
@@ -40,7 +41,7 @@ public class PatientController {
     @Autowired
     private PatientRestService patientRestService;
 
-    private Boolean localMode = true;
+    private Boolean localMode = false;
 
     static {
         patientList.add(new Patient("M","Dmitri","Gloukhovski",
@@ -212,19 +213,18 @@ public class PatientController {
                 model.addAttribute("patients", PatientController.patientList);
             }
         } else {
-            /**
             try {
-                Patient patientUpdated = patientRestService.updatePatient(patient.getId(), patient.getLastname(), patient.getFirstname(), patient.getBirthDate(), patient.getSex(), patient.getAddress(), patient.getPhone());
+                Patient patientUpdated = patientRestService.update(patient);
                 log.info("Patient Update on URL: '{}' : Patient Updated '{}' : RESPONSE STATUS: '{}'",
                         request.getRequestURI(),
                         patientUpdated.getId() + " " + patientUpdated.getLastName(),
                         response.getStatus());
                 model.addAttribute("patients", patientRestService.getList());
                 return "redirect:/patient/list";
-            } catch (Exception exception) {
+            } catch (PatientCrudException exception) {
                 model.addAttribute("errorUpdatingPatient", exception.getMessage());
                 return "patient/update";
-            }**/
+            }
         }
         return "redirect:/patient/list";
     }
