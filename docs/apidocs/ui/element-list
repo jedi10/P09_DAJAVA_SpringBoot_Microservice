@@ -1,0 +1,8 @@
+com.mediscreen.ui
+com.mediscreen.ui.configuration
+com.mediscreen.ui.controller
+com.mediscreen.ui.exception
+com.mediscreen.ui.model
+com.mediscreen.ui.service.restTemplateService
+com.mediscreen.ui.tool
+com.mediscreen.ui.web.validation

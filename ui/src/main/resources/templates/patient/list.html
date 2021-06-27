@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Patient List</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div th:switch="${patients}"  class="row">
+        <div class="col-6">
+            <a href="">Home Page</a>&nbsp;|&nbsp;
+            <a href="/patient/list">Patient List</a>
+        </div>
+    </div>
+    <div class="row"><h2>Patients List</h2></div>
+    <div class="row">
+        <a href="/patient/add" class="btn btn-primary btn-sm">Add New</a>
+        <h3 th:if="${#lists.isEmpty(patients)}">No patients yet!</h3>
+        <p class="text-danger" th:if="${!#strings.isEmpty(errorListingPatients)}" th:text="${errorListingPatients}"></p>
+
+        <table th:unless="${#lists.isEmpty(patients)}" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Sex</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Birth Date</th>
+                <th>Phone</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="patientItem : ${patients}">
+                <td th:text="${patientItem.getSex()}"></td>
+                <td th:text="${patientItem.getFirstName()}"></td>
+                <td th:text="${patientItem.getLastName()}"></td>
+                <td th:text="${patientItem.getBirthDate()}"></td>
+                <td th:text="${patientItem.getPhone()}"></td>
+                <td>
+                    <a th:href="@{/patient/update/{id}(id=${patientItem.getId()})}" class="btn btn-primary"><i class="fas fa-user-edit ml-2"></i></a>
+                    <a th:href="@{/patient/delete/{id}(id=${patientItem.getId()})}" class="btn btn-primary"><i class="fas fa-user-times ml-2"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+
+<!--https://www.javaguides.net/2019/04/spring-mvc-thymeleaf-crud-example-tutorial.html-->
+<!--https://frontbackend.com/thymeleaf/using-conditions-in-thymeleaf-->
+<!-- table avec gestion pagination https://frontbackend.com/thymeleaf/spring-boot-bootstrap-thymeleaf-table -->
