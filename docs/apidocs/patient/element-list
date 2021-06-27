@@ -1,0 +1,6 @@
+com.mediscreen.patient
+com.mediscreen.patient.controller
+com.mediscreen.patient.exception
+com.mediscreen.patient.model
+com.mediscreen.patient.repository
+com.mediscreen.patient.service

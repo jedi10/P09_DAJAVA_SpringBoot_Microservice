@@ -11,6 +11,10 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Optional;
 
+/**
+ * <b>All CRUD operations for Patient</b>
+ * <p>use of a repository working with a Mysql database</p>
+ */
 @Slf4j
 @Service
 public class PatientDalServiceBean implements IPatientDalService {
