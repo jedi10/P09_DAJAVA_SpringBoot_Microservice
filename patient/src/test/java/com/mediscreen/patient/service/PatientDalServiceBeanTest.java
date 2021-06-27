@@ -175,5 +175,67 @@ class PatientDalServiceBeanTest {
         verify(patientRepositoryMock, Mockito.times(1)).findByLastNameIgnoreCase(patientGiven.getLastName());
     }
 
+    @Order(9)
+    @Test
+    void update_notFound(){
+        //GIVEN
+        when(patientRepositoryMock.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.empty());
 
+        //WHEN
+        Exception exception = assertThrows(PatientNotFoundException.class, () -> {
+            patientDalService.update(patientGiven);
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Patient not found with id"));
+        verify(patientRepositoryMock, Mockito.times(1)).findById(patientGiven.getId());
+    }
+
+    @Order(10)
+    @Test
+    void update_uniquenessConstraint(){
+        //GIVEN
+        patientGiven.setId(10);
+        Patient previousPatient = new Patient(patientGiven.getSex(),patientGiven.getLastName(),patientGiven.getLastName(),patientGiven.getBirthDate(),patientGiven.getAddress(),patientGiven.getPhone());
+        previousPatient.setId(2);
+        when(patientRepositoryMock.findById(ArgumentMatchers.anyInt())).thenReturn(java.util.Optional.ofNullable(patientGiven));
+        when(patientRepositoryMock.findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+                .thenReturn(Optional.of(previousPatient));
+
+        //WHEN
+        Exception exception = assertThrows(PatientUniquenessConstraintException.class, () -> {
+            patientDalService.update(patientGiven);
+        });
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Patient with same firstname, lastname and birthdate already exist"));
+        verify(patientRepositoryMock, Mockito.times(1)).findById(patientGiven.getId());
+        verify(patientRepositoryMock, Mockito.times(1)).findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                patientGiven.getFirstName(),patientGiven.getLastName(),patientGiven.getBirthDate());
+    }
+
+    @Order(11)
+    @Test
+    void update_ok(){
+        //GIVEN
+        patientGiven.setId(10);
+        when(patientRepositoryMock.findById(ArgumentMatchers.anyInt())).thenReturn(java.util.Optional.ofNullable(patientGiven));
+        when(patientRepositoryMock.findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+                .thenReturn(Optional.ofNullable(null));
+        when(patientRepositoryMock.save(patientGiven)).thenReturn(patientGiven);
+
+        //WHEN
+        Patient patientResult = patientDalService.update(patientGiven);
+
+        //THEN
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+        verify(patientRepositoryMock, Mockito.times(1)).findById(patientGiven.getId());
+        verify(patientRepositoryMock, Mockito.times(1)).findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(
+                patientGiven.getFirstName(),patientGiven.getLastName(),patientGiven.getBirthDate());
+    }
 }

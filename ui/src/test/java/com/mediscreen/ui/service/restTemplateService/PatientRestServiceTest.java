@@ -145,4 +145,35 @@ class PatientRestServiceTest {
         assertNotNull(patientResult);
         assertEquals(patientGiven, patientResult);
     }
+
+    @Order(5)
+    @Test
+    void updatePatient() throws JsonProcessingException {
+        //Given
+        Patient patientGiven = new Patient("M","Dmitri","Gloukhovski",
+                LocalDate.of(1979,6,12),"Moscou","phone1_Test");
+        patientGiven.setId(0);
+        String json = this.objectMapper
+                .writeValueAsString(patientGiven);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://patient:8081/patient/update")
+                        .queryParam("id", patientGiven.getId())
+                        .queryParam("family", patientGiven.getLastName())
+                        .queryParam("given", patientGiven.getFirstName())
+                        .queryParam("dob", patientGiven.getBirthDate())
+                        .queryParam("sex", patientGiven.getSex())
+                        .queryParam("address", patientGiven.getAddress())
+                        .queryParam("phone", patientGiven.getPhone());
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Patient patientResult = patientRestService.update(patientGiven);
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(patientResult);
+        assertEquals(patientGiven, patientResult);
+    }
 }

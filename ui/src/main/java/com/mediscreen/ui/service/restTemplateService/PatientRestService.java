@@ -1,8 +1,11 @@
 package com.mediscreen.ui.service.restTemplateService;
 
+import com.mediscreen.ui.exception.PatientCrudException;
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.model.Patient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -42,7 +45,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new PatientCrudException(errorMessage);
         }
     }
 
@@ -66,7 +69,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new NotFoundException(errorMessage);
         }
     }
 
@@ -89,6 +92,7 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
+            throw new PatientCrudException(errorMessage);
         }
     }
 
@@ -119,7 +123,40 @@ public class PatientRestService {
                     className,
                     exception.getMessage());
             log.error(errorMessage);
-            return null;
+            throw new PatientCrudException(errorMessage);
+        }
+    }
+
+    public Patient update(Patient patient){
+        String logMessage = String.format("UI: call to %s.updatePatient()",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s%s",
+                patientDockerURI,
+                patientURL,
+                "/update");
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl)
+                        .queryParam("id", patient.getId())
+                        .queryParam("family", patient.getLastName())
+                        .queryParam("given", patient.getFirstName())
+                        .queryParam("dob", patient.getBirthDate())
+                        .queryParam("sex", patient.getSex())
+                        .queryParam("address", patient.getAddress())
+                        .queryParam("phone", patient.getPhone());
+        try {
+            ResponseEntity<Patient> responseEntity = restTemplate.exchange(
+                    uriComponentsBuilder.toUriString(),
+                    HttpMethod.PUT,
+                    null,
+                    Patient.class);
+            return responseEntity.getBody();
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.updatePatient: %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
+            throw new PatientCrudException(errorMessage);
         }
     }
 
