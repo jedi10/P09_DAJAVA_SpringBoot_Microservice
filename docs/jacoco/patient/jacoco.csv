@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+patient,com.mediscreen.patient.model,Patient,18,287,7,47,0,17,8,39,1,19
+patient,com.mediscreen.patient,PatientApplication,5,3,0,0,2,1,1,1,1,1
+patient,com.mediscreen.patient.exception,PatientUniquenessConstraintException,0,13,0,0,0,5,0,3,0,3
+patient,com.mediscreen.patient.exception,PatientNotFoundException,0,13,0,0,0,5,0,3,0,3
+patient,com.mediscreen.patient.service,PatientDalServiceBean,25,148,1,7,6,31,4,13,3,10
+patient,com.mediscreen.patient.controller,PatientController,14,114,0,0,5,35,1,7,1,7

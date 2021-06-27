@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PatientDalServiceBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">patient</a> &gt; <a href="index.source.html" class="el_package">com.mediscreen.patient.service</a> &gt; <span class="el_source">PatientDalServiceBean.java</span></div><h1>PatientDalServiceBean.java</h1><pre class="source lang-java linenums">package com.mediscreen.patient.service;
+
+import com.mediscreen.patient.exception.PatientNotFoundException;
+import com.mediscreen.patient.exception.PatientUniquenessConstraintException;
+import com.mediscreen.patient.model.Patient;
+import com.mediscreen.patient.repository.PatientRepository;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Optional;
+
+<span class="fc" id="L14">@Slf4j</span>
+@Service
+public class PatientDalServiceBean implements IPatientDalService {
+
+    private PatientRepository patientRepository;
+
+<span class="fc" id="L20">    public PatientDalServiceBean(PatientRepository patientRepository) {</span>
+<span class="fc" id="L21">        this.patientRepository = patientRepository;</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * &lt;b&gt;Create Patient&lt;/b&gt;
+     * @param patient mandatory
+     * @return patient when persistence successful
+     */
+    @Override
+<span class="fc bfc" id="L30" title="All 2 branches covered.">    public Patient create(@NonNull Patient patient) {</span>
+<span class="fc" id="L31">        log.debug(&quot;Call to patientDalService.create&quot;);</span>
+<span class="fc" id="L32">        Optional&lt;Patient&gt; previousPatient = patientRepository</span>
+<span class="fc" id="L33">                .findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(patient.getFirstName(), patient.getLastName(), patient.getBirthDate());</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (previousPatient.isPresent()){</span>
+<span class="fc" id="L35">            log.debug(&quot;createPatient: uniqueness constraint violation: patient already present&quot;);</span>
+<span class="fc" id="L36">            throw new PatientUniquenessConstraintException(&quot;Patient is already present&quot;);</span>
+        } else {
+<span class="fc" id="L38">            return patientRepository.save(patient);</span>
+        }
+    }
+
+    @Override
+    public Patient update(Patient patient) {
+<span class="fc" id="L44">        log.debug(&quot;Call to patientDalService.update&quot;);</span>
+<span class="fc" id="L45">        patientRepository.findById(patient.getId())</span>
+<span class="fc" id="L46">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L47">                            log.debug(&quot;updatePatient: patient not present&quot;);</span>
+<span class="fc" id="L48">                            return new PatientNotFoundException(&quot;Patient not found with id:&quot; + patient.getId()+ &quot;: update impossible&quot;);</span>
+                        });
+<span class="fc" id="L50">        Optional&lt;Patient&gt; previousPatient = patientRepository</span>
+<span class="fc" id="L51">                .findByFirstNameAndLastNameAndBirthDateAllIgnoreCase(patient.getFirstName(), patient.getLastName(), patient.getBirthDate());</span>
+
+<span class="pc bpc" id="L53" title="1 of 4 branches missed.">        if (previousPatient.isPresent() &amp;&amp; !previousPatient.get().getId().equals(patient.getId())) {</span>
+<span class="fc" id="L54">            log.debug(&quot;updatePatient : Patient with same firstname, lastname and birthdate already exist&quot;);</span>
+<span class="fc" id="L55">            throw new PatientUniquenessConstraintException(&quot;Patient with same firstname, lastname and birthdate already exist: update impossible&quot;);</span>
+        } else {
+<span class="fc" id="L57">            return patientRepository.save(patient);</span>
+        }
+    }
+
+    /**
+     * &lt;b&gt;Give all Patients&lt;/b&gt;
+     * @return a collection of patients
+     */
+    @Override
+    public Collection&lt;Patient&gt; findAll() {
+<span class="fc" id="L67">        log.debug(&quot;Call to patientDalService.findAll&quot;);</span>
+<span class="fc" id="L68">        return patientRepository.findAll();</span>
+    }
+
+    /**
+     * &lt;b&gt;Get Patient with LastName&lt;/b&gt;
+     * @param lastName mandatory
+     * @return Patient
+     */
+    @Override
+    public Patient getPatientByLastName(String lastName) {
+<span class="fc" id="L78">        log.debug(&quot;Call to patientDalService.getPatientByLastName&quot;);</span>
+<span class="fc" id="L79">        return patientRepository.findByLastNameIgnoreCase(lastName)</span>
+<span class="fc" id="L80">                .orElseThrow(() -&gt; new PatientNotFoundException(&quot;Patient not found with lastName:&quot; + lastName));</span>
+    }
+
+    /**
+     * &lt;b&gt;Get Patient with Id&lt;/b&gt;
+     * @param id mandatory
+     * @return Patient
+     */
+    @Override
+    public Patient getPatient(int id) {
+<span class="fc" id="L90">        log.debug(&quot;Call to patientDalService.getPatient&quot;);</span>
+<span class="fc" id="L91">        return patientRepository.findById(id)</span>
+<span class="fc" id="L92">                .orElseThrow(() -&gt; new PatientNotFoundException(&quot;Patient not found with id:&quot; + id));</span>
+    }
+
+    @Override
+    public void deletePatient(int id) {
+<span class="nc" id="L97">        patientRepository.findById(id)</span>
+<span class="nc" id="L98">                .orElseThrow(() -&gt; new PatientNotFoundException(&quot;Patient not found with id:&quot; + id));</span>
+<span class="nc" id="L99">        patientRepository.deleteById(id);</span>
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public void deleteAllPatients() {
+<span class="nc" id="L104">        patientRepository.deleteAll();</span>
+<span class="nc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
