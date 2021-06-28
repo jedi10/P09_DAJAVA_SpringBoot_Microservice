@@ -13,6 +13,20 @@ services :
     depends_on:
       patient:
         condition: service_started
+      note:
+        condition: service_started
+
+  note:
+    image: note
+    build:
+      context: ../note
+      dockerfile: ../note/dockerfile
+    container_name: note
+    ports:
+      - "8071:8071"
+    depends_on:
+      - mongodb
+        #condition: service_healthy
 
   patient:
     image : patient
@@ -21,7 +35,7 @@ services :
       dockerfile: ../patient/dockerfile
     container_name: patient
     ports :
-      - "8081:8081"
+      - "8085:8085"
     depends_on:
       mariadb:
         condition: service_healthy
@@ -51,7 +65,46 @@ services :
       timeout: 10s
       retries: 5
 
+  mongodb:
+    image: mongo:latest
+    #environment:
+      #MONGO_INITDB_DATABASE: note_db
+      #MONGO_INITDB_ROOT_USERNAME: root
+      #MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      #MONGODB_DATA_DIR: /data/db
+      #MONDODB_LOG_DIR: /dev/null
+    container_name: mongo
+    ports:
+      - 27017:27017
+    #healthcheck:
+      #test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      #test: ["CMD-SHELL", "docker-healthcheck"]
+      #interval: 10s
+      #timeout: 10s
+      #retries: 5
+      #start_period: 40s
 
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    ports:
+      - 8081:8081
+    #environment:
+      #ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      #ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+    depends_on:
+      - mongodb
+
+
+#MongoDB
+  #with contol panel https://medium.com/@kristaps.strals/docker-mongodb-net-core-a-good-time-e21f1acb4b7b
+  #https://yosh.ke.mu/mongo_in_docker
+  #https://www.codeflow.site/fr/article/how-to-set-up-flask-with-mongodb-and-docker
+  #https://github.com/sonyarianto/docker-compose-mongodb
+#http://pierrepironin.github.io/docker-et-mongodb/
+
+
+#MARIADB
 #https://forums.docker.com/t/using-a-database-defined-in-external-compose-file/93869/2
 #https://stefanscherer.github.io/run-linux-and-windows-containers-on-windows-10/
 #https://howchoo.com/devops/how-to-add-a-health-check-to-your-docker-container
@@ -70,3 +123,6 @@ services :
 #docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb
 #https://learntubes.com/how-to-install-mariadb-using-docker-compose
 #https://onexlab-io.medium.com/docker-compose-mariadb-5eb7a37426a2
+
+#HealthCheck for postgres
+# https://github.com/peter-evans/docker-compose-healthcheck
