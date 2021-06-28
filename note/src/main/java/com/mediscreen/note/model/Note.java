@@ -35,4 +35,12 @@ public class Note {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate recordDate;
+
+    public Note(@NotNull(message = "{Note.patientId.mandatory}") Integer patientId,
+                @NotBlank(message = "{Note.note.mandatory}") String note,
+                LocalDate recordDate) {
+        this.patientId = patientId;
+        this.note = note;
+        this.recordDate = recordDate;
+    }
 }
