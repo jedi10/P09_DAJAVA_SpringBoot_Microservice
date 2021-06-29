@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Note List</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
+          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div th:switch="${notes}"  class="row">
+        <div class="col-6">
+            <a href="">Home Page</a>&nbsp;|&nbsp;
+            <a href="/patient/list">Patient List</a>
+        </div>
+    </div>
+    <div class="row">
+        <h2>Historical for Patient
+            <label th:text="${patient.firstName}"></label>&nbsp;
+            <label th:text="${patient.lastName}"></label>
+        </h2>
+    </div>
+    <div class="row">
+        <a href="/note/add" class="btn btn-primary btn-sm">Add New</a>
+        <h3 th:if="${#lists.isEmpty(notes)}">No notes yet!</h3>
+        <p class="text-danger" th:if="${!#strings.isEmpty(errorListingNotes)}" th:text="${errorListingNotes}"></p>
+
+        <table th:unless="${#lists.isEmpty(notes)}" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Record Date</th>
+                <th>Note</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="noteItem : ${notes}">
+                <td th:text="${noteItem.getRecordDate()}"></td>
+                <td th:text="${noteItem.getNote()}"></td>
+                <td>
+                    <a th:href="@{/note/{patientId}/update/{id}
+                        (id=${noteItem.getId()}, patientId=${patient.getId()})}" class="btn btn-primary"><i class="fas fa-user-edit ml-2"></i></a>
+                    <a th:href="@{/note/{patientId}/delete/{id}
+                        (id=${noteItem.getId()}, patientId=${patient.getId()})}" class="btn btn-primary"><i class="fas fa-user-times ml-2"></i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+
+<!--https://www.javaguides.net/2019/04/spring-mvc-thymeleaf-crud-example-tutorial.html-->
+<!--https://frontbackend.com/thymeleaf/using-conditions-in-thymeleaf-->
+<!-- table avec gestion pagination https://frontbackend.com/thymeleaf/spring-boot-bootstrap-thymeleaf-table -->

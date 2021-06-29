@@ -2,6 +2,7 @@ package com.mediscreen.ui.model;
 
 import com.mediscreen.ui.web.validation.HumanGender;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 public class Patient {
 
+    @EqualsAndHashCode.Exclude
     private Integer id;
 
     @HumanGender(message = "{Patient.sex.choice}")
