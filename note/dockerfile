@@ -1,5 +1,3 @@
-
-
 # https://hub.docker.com/_/openjdk
 FROM openjdk:11
 #LABEL administrator="kyle10_dev@outlook.fr"
