@@ -66,7 +66,7 @@ class NoteControllerTest {
 
         when(noteDalServiceMock.getHistoricalNotes(patientId)).thenReturn(historicalGiven);
 
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/history")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/note")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("patientId", String.valueOf(patientId));
         //WHEN
