@@ -19,7 +19,7 @@ import java.util.List;
 @Api(tags = {"Microservice Note Controller"})
 @Tag(name = "Microservice Note Controller", description = "Note Microservice deals with Patient Historical Notes")
 @RestController
-@RequestMapping("/history")
+@RequestMapping("/note")
 public class NoteController {
 
     @Autowired
