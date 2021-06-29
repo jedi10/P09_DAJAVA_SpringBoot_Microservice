@@ -5,10 +5,9 @@
     <meta charset="utf-8"/>
     <title>Patient List</title>
     <link rel="stylesheet" href="../../css/bootstrap.min.css" >
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
-          integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz"
-          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+          integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+          crossorigin="anonymous"/>
 </head>
 <body>
 <div class="container">
@@ -45,6 +44,7 @@
                 <td>
                     <a th:href="@{/patient/update/{id}(id=${patientItem.getId()})}" class="btn btn-primary"><i class="fas fa-user-edit ml-2"></i></a>
                     <a th:href="@{/patient/delete/{id}(id=${patientItem.getId()})}" class="btn btn-primary"><i class="fas fa-user-times ml-2"></i></a>
+                    <a th:href="@{/note/{patientId}/list(patientId=${patientItem.getId()})}" class="btn btn-primary"><i class="fas fa-notes-medical"></i></a>
                 </td>
             </tr>
             </tbody>
