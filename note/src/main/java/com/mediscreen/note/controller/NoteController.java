@@ -7,15 +7,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
 
+@Slf4j
 @Api(tags = {"Microservice Note Controller"})
 @Tag(name = "Microservice Note Controller", description = "Note Microservice deals with Patient Historical Notes")
 @RestController
@@ -35,7 +39,12 @@ public class NoteController {
     }
     )
     @GetMapping("")
-    public List<Note> getHistoricalNotes(@RequestParam Integer patientId) {
+    public List<Note> getHistoricalNotes(@RequestParam Integer patientId,
+                                         HttpServletRequest request, HttpServletResponse response) {
+        log.info("Note Microservice: getAllNotes for PatientId: {} EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                patientId,
+                request.getRequestURI(),
+                response.getStatus());
         return noteDalService.getHistoricalNotes(patientId);
     }
 }
