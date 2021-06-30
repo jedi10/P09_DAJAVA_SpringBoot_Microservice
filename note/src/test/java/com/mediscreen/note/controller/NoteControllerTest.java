@@ -22,8 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = NoteController.class)//@AutoConfigureMockMvc
 //https://spring.io/guides/gs/testing-web/
@@ -81,6 +80,32 @@ class NoteControllerTest {
         //*********************************************************
         String jsonResult = mvcResult.getResponse().getContentAsString();
         String expectedJson = objectMapper.writeValueAsString(historicalGiven);
+        JSONAssert.assertEquals(expectedJson, jsonResult, true);
+    }
+
+    @Order(2)
+    @Test
+    void addNote() throws Exception {
+        //GIVEN
+        when(noteDalServiceMock.create(noteGiven)).thenReturn(noteGiven);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/note/add").
+                contentType(MediaType.APPLICATION_JSON)
+                        .param("patientId", noteGiven.getPatientId().toString())
+                        .param("note",noteGiven.getNote());
+
+        MvcResult mvcResult =
+                mockMvc.perform(builder)//.andDo(print());
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn();
+
+        verify(noteDalServiceMock, Mockito.times(1)).create(noteGiven);
+        //*********************************************************
+        //**************CHECK RESPONSE CONTENT*********************
+        //*********************************************************
+        String jsonResult = mvcResult.getResponse().getContentAsString();
+        String expectedJson = objectMapper.writeValueAsString(noteGiven);
         JSONAssert.assertEquals(expectedJson, jsonResult, true);
     }
 }
