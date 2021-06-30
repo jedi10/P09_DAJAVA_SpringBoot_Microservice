@@ -7,5 +7,6 @@ import java.util.List;
 public interface INoteDalService {
 
     List<Note> getHistoricalNotes(Integer patientId);
+    Note create(Note note);
 
 }
