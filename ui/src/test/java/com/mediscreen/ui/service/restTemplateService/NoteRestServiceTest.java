@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +82,35 @@ class NoteRestServiceTest {
         assertEquals(noteListGiven.get(0), noteListResult.get(0));
     }
 
+    @Order(2)
+    @Test
+    void addNote() throws JsonProcessingException {
+        //Given
+        int patientId = 1;
+        Note noteGiven = new Note(patientId,"premiere_visite_au_centre_medical;_injection_vaccin", LocalDate.now());
+        noteGiven.setId("0");
+        String json = this.objectMapper
+                .writeValueAsString(noteGiven);
+        String httpUrl = String.format("%s%s%s",
+                noteDockerURI,
+                noteURL,
+                "add");
 
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl)
+                        .queryParam("patientId", noteGiven.getPatientId())
+                        .queryParam("note", noteGiven.getNote());
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Note noteResult = noteRestService.add(noteGiven);
 
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(noteResult);
+        assertEquals(noteGiven, noteResult);
+        //String noteDecode = URLDecoder.decode(noteResult.getNote(), StandardCharsets.UTF_8);
+    }
 }
