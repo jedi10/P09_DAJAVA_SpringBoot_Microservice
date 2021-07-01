@@ -5,6 +5,7 @@ import com.mediscreen.note.repository.NoteRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -51,4 +53,21 @@ class NoteDalServiceTest {
         assertNotNull(patientHistoricalResult);
         assertEquals(patientHistoricalGiven.size(), patientHistoricalResult.size());
     }
+
+    @Order(2)
+    @Test
+    void create() {
+        //GIVEN
+        when(noteRepositoryMock.save(noteGiven)).thenReturn(noteGiven);
+        verify(noteRepositoryMock, Mockito.never()).save(noteGiven);
+
+        //WHEN
+        Note noteResult = noteDalService.create(noteGiven);
+
+        //THEN
+        assertNotNull(noteResult);
+        assertEquals(noteGiven, noteResult);
+        verify(noteRepositoryMock, Mockito.times(1)).save(noteGiven);
+    }
+
 }

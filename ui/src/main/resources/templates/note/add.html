@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Add Patient</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
+</head>
+<body>
+<div class="container">
+
+    <div class="row">
+        <h2>Add New Note for Patient&ensp;
+            <label th:text="${patient.firstName}"></label>&nbsp;
+            <label th:text="${patient.lastName}"></label></h2>
+    </div>
+
+    <div class="row">
+        <form action="#" th:action="@{/note/{patientId}/validate(patientId=${patient.id})}" th:object="${note}" method="post" accept-charset="utf-8" class="form-horizontal" style="width: 100%">
+            <p class="text-danger" th:if="${!#strings.isEmpty(errorAddingNote)}" th:text="${errorAddingNote}"></p>
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <ol>
+                    <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                </ol>
+            </div>
+            <div class = "form-group row ">
+                <label for = "note" class = "col-sm-2 col-form-label">Note</label>
+                <div class = "col-sm-4">
+                    <textarea th:field="*{note}" id = "note" class = "form-control" placeholder = "Mandatory"></textarea>
+                    <p class="text-danger" th:if="${#fields.hasErrors('note')}" th:errors="*{note}"></p>
+                </div>
+            </div>
+            <div class = "form-group row">
+                <input type="hidden" th:value="${patient.id}" name="patientId">
+                <div class = "col-sm-5">
+                    <button type = "submit" class = "btn btn-primary">Save data</button>
+                </div>
+                <div class = "col-sm-5">
+                    <a class="btn btn-danger" th:href="@{/note/{patientId}/list(patientId=${patient.id})}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
+
+<!--https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/number-->
+
+<!--https://fr.wikihow.com/insérer-des-espaces-dans-un-code-HTML-->
