@@ -8,6 +8,9 @@ import com.mediscreen.ui.service.restTemplateService.NoteRestService;
 import com.mediscreen.ui.service.restTemplateService.PatientRestService;
 import com.mediscreen.ui.tool.Snippets;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,15 @@ public class NoteController {
         patient.setId(patientId);
     }
 
+    @ApiOperation(value = "Show List of Note for one Patient", response= String.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully show a list of Note"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @GetMapping(value = "{patientId}/list")
     public String list(@PathVariable("patientId") Integer patientId,
                        Model model, HttpServletRequest request, HttpServletResponse response){
@@ -82,7 +94,15 @@ public class NoteController {
         return "note/list";
     }
 
-
+    @ApiOperation(value = "Show Form to create a Note", response = String.class, notes = "Show an empty form to create a Note for one Patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully show form to create a new Patient"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient creation form"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @GetMapping(value = "{patientId}/add")
     public String addNoteForm(@PathVariable Integer patientId,
                               Model model,
@@ -107,6 +127,15 @@ public class NoteController {
         return "note/add";
     }
 
+    @ApiOperation(value = "Validate a Note", response = String.class, notes = "User send form to validate and create a Note")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully validate a new Note"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to create Note"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @PostMapping(value = "{patientId}/validate") // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE+";charset=UTF-8"})//"application/x-www-form-urlencoded")
     public String validate(@PathVariable Integer patientId,
                            @Valid Note note,
