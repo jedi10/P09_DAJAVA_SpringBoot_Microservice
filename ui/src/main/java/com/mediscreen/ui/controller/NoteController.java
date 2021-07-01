@@ -44,7 +44,7 @@ public class NoteController {
     private static List<Note> noteList = new ArrayList<>();
     private static Patient patient;
 
-    private Boolean localMode = true;
+    Boolean localMode = false;
 
     static {
         int patientId = 1;
@@ -94,17 +94,16 @@ public class NoteController {
             model.addAttribute("patient", NoteController.patient);
             model.addAttribute("note", new Note());
 
-        } /**else {
+        } else {
             try {
                 Patient patient = patientRestService.getById(patientId);
                 model.addAttribute("patient", patient);
                 model.addAttribute("note", new Note());
-                return "note/add";
             } catch (PatientCrudException e) {
                 model.addAttribute("errorAddingNote", e.getMessage());
                 return patientController.list(model, request, response);
             }
-        }**/
+        }
         return "note/add";
     }
 
@@ -130,18 +129,17 @@ public class NoteController {
             noteCreated.setId(String.valueOf(Snippets.getRandomNumberInRange(2,1000)));
             noteCreated.setRecordDate(LocalDate.now());
             NoteController.noteList.add(noteCreated);
-            //model.addAttribute("notes", NoteController.noteList);
-        } /**else {
+        } else {
             try {
-                model.addAttribute("patient", patientRestService.getById(note.getPatientId()));
+                //Make sure we have a patient
+                patientRestService.getById(note.getPatientId());
                 noteCreated = noteRestService.add(note);
-                model.addAttribute("notes", noteRestService.getList(patientId));
 
             } catch (PatientCrudException | NoteCrudException e) {
                 model.addAttribute("errorAddingNote", e.getMessage());
                 return "note/add";
             }
-        }**/
+        }
         log.info("UI: Note Creation on URL: '{}' : Note Created for PatientId '{}' : RESPONSE STATUS: '{}'",
                 request.getRequestURI(),
                 noteCreated.getPatientId() + ": " + noteCreated.getNote(),
