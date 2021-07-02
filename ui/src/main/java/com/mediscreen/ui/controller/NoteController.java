@@ -49,7 +49,7 @@ public class NoteController {
     private static List<Note> noteList = new ArrayList<>();
     private static Patient patient;
 
-    Boolean localMode = true;
+    Boolean localMode = false;
 
     static {
         int patientId = 1;
@@ -179,6 +179,15 @@ public class NoteController {
         return "redirect:/note/"+ noteCreated.getPatientId() +"/list";
     }
 
+    @ApiOperation(value = "Delete specific Note with the supplied Note id", notes= "/note/delete/1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deletes the specific Note"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to delete is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @GetMapping(value = "{patientId}/delete/{id}")
     public String deleteNote(@PathVariable Integer patientId, @PathVariable("id") String id,
                              Model model,
@@ -198,7 +207,7 @@ public class NoteController {
                         request.getRequestURI(),
                         response.getStatus());
             }
-        } /**else {
+        } else {
 
             Note noteResult = null;
             try {
@@ -214,7 +223,7 @@ public class NoteController {
                         response.getStatus());
                 model.addAttribute("errorListingNotes", e.getMessage());
             }
-        }**/
+        }
         return "redirect:/note/"+ patientId +"/list";
     }
 }

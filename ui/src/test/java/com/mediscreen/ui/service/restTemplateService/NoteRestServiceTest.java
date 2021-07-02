@@ -2,8 +2,10 @@ package com.mediscreen.ui.service.restTemplateService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.exception.NoteCrudException;
 import com.mediscreen.ui.model.Note;
+import com.mediscreen.ui.model.Patient;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
@@ -19,6 +21,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +46,7 @@ class NoteRestServiceTest {
     private MockRestServiceServer mockServer;
 
     public static final String noteDockerURI = "http://note:8071";
-    public static final String noteURL = "/note/";
+    public static final String noteURL = "/note";
 
     @BeforeEach
     void setUp() {
@@ -65,9 +68,10 @@ class NoteRestServiceTest {
         String json = this.objectMapper
                 .writeValueAsString(noteListGiven);
 
-        String httpUrl = String.format("%s%s",
+        String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
-                noteURL);
+                noteURL,
+                "/");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("patientId", patientId);//?patientId=0
@@ -97,7 +101,7 @@ class NoteRestServiceTest {
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "add");
+                "/add");
 
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl)
@@ -119,13 +123,80 @@ class NoteRestServiceTest {
 
     @Order(3)
     @Test
+    void getNoteById() throws JsonProcessingException {
+        //Given
+        String idOnTest = "0";
+        int patientId = 1;
+        Note noteGiven = new Note(patientId,"premiere_visite_au_centre_medical;_injection_vaccin",
+                LocalDate.now().minus(3, ChronoUnit.DAYS));
+        noteGiven.setId(idOnTest);
+        String json = this.objectMapper
+                .writeValueAsString(noteGiven);
+        String httpUrl = String.format("%s%s%s",
+                noteDockerURI,
+                noteURL,
+                "/");
+
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", idOnTest);//?id=0
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Note noteResult = noteRestService.getById(idOnTest);
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(noteResult);
+        assertEquals(noteGiven, noteResult);
+    }
+
+    @Order(4)
+    @Test
+    void getNoteById_error() {
+        //Given
+        String idOnTest = "0";
+        int patientId = 1;
+        Note noteGiven = new Note(patientId,"premiere_visite_au_centre_medical;_injection_vaccin",
+                LocalDate.now().minus(3, ChronoUnit.DAYS));
+        noteGiven.setId(idOnTest);
+
+        String httpUrl = String.format("%s%s%s",
+                noteDockerURI,
+                noteURL,
+                "/");
+
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", idOnTest);//?id=0
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withException(new IOException("Not Found")));
+        //WHEN
+        Exception exception = assertThrows(NotFoundException.class,
+                ()-> noteRestService.getById(idOnTest)
+        );
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Exception during"));
+        assertTrue(exception.getMessage().contains(".getNoteById"));
+        assertTrue(exception.getMessage().contains("Not Found"));
+    }
+
+    @Order(5)
+    @Test
     void deleteNoteById_ok() {
         //Given
         String idOnTest = "0";
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "delete");
+                "/delete");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("id", idOnTest);//?id=0
@@ -140,7 +211,7 @@ class NoteRestServiceTest {
         this.mockServer.verify();
     }
 
-    @Order(4)
+    @Order(6)
     @Test
     void deleteNoteById_error() {
         //Given
@@ -148,7 +219,7 @@ class NoteRestServiceTest {
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "delete");
+                "/delete");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("id", idOnTest);//?id=0
