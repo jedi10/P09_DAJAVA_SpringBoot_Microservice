@@ -92,6 +92,24 @@ public class NoteController {
         noteDalService.delete(id);
     }
 
+    @ApiOperation(value = "Get a Note with id", response= Note.class, notes= "/note?id=1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully get the Note with the supplied id"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @GetMapping("/get")
+    public Note getById(@RequestParam String id,
+                              HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+        log.info("Note Microservice: getNote with id EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                request.getRequestURI(),
+                response.getStatus());
+        return noteDalService.getById(id);
+    }
+
 
 
 

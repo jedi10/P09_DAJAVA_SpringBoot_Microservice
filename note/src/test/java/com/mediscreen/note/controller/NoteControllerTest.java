@@ -125,4 +125,21 @@ class NoteControllerTest {
 
         verify(noteDalServiceMock, Mockito.times(1)).delete(noteGiven.getId());
     }
+
+    @Order(4)
+    @Test
+    void getNoteById() throws Exception {
+        //GIVEN
+        noteGiven.setId("1");
+        when(noteDalServiceMock.getById(noteGiven.getId())).thenReturn(noteGiven);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/note/get")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("id", noteGiven.getId());
+
+        mockMvc.perform(builder)//.andDo(print());
+                .andExpect(status().isOk());
+
+        verify(noteDalServiceMock, Mockito.times(1)).getById(noteGiven.getId());
+    }
 }
