@@ -110,6 +110,40 @@ class NoteDalServiceTest {
         verify(noteRepositoryMock, Mockito.never()).deleteById(noteGiven.getId());
     }
 
+    @Order(5)
+    @Test
+    void getById_ok() {
+        //GIVEN
+        noteGiven.setId("1");
+        when(noteRepositoryMock.findById(noteGiven.getId())).thenReturn(java.util.Optional.ofNullable(noteGiven));
+
+        //WHEN
+        noteDalService.getById(noteGiven.getId());
+
+        //THEN
+        verify(noteRepositoryMock, Mockito.times(1)).findById(noteGiven.getId());
+    }
+
+    @DisplayName("getById failed: note Not Found")
+    @Order(6)
+    @Test
+    void getById_noteNotFound() {
+        //GIVEN
+        noteGiven.setId("1");
+        when(noteRepositoryMock.findById(noteGiven.getId())).thenThrow(
+                new NoteNotFoundException("Note not found with id"));
+
+        //WHEN
+        Exception exception = assertThrows(NoteNotFoundException.class,
+                ()-> noteDalService.delete(noteGiven.getId())
+        );
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Note not found with id"));
+        verify(noteRepositoryMock, Mockito.times(1)).findById(noteGiven.getId());
+    }
+
 }
 
 //https://stackoverflow.com/questions/2276271/how-to-mock-void-methods-with-mockito
