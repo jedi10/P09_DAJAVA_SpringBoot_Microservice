@@ -68,10 +68,9 @@ class NoteRestServiceTest {
         String json = this.objectMapper
                 .writeValueAsString(noteListGiven);
 
-        String httpUrl = String.format("%s%s%s",
+        String httpUrl = String.format("%s%s",
                 noteDockerURI,
-                noteURL,
-                "/");
+                noteURL);
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("patientId", patientId);//?patientId=0
@@ -135,7 +134,7 @@ class NoteRestServiceTest {
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "/");
+                "/get");
 
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
@@ -166,7 +165,7 @@ class NoteRestServiceTest {
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "/");
+                "/get");
 
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).

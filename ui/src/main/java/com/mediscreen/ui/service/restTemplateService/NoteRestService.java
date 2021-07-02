@@ -26,9 +26,9 @@ public class NoteRestService {
     @Autowired
     RestTemplate restTemplate;
 
-    public static final String className = PatientRestService.class.getSimpleName();
+    public static final String className = NoteRestService.class.getSimpleName();
     public static final String noteDockerURI = "http://note:8071";
-    public static final String noteURL = "/note/";
+    public static final String noteURL = "/note";
 
     public List<Note> getList(int patientId) {
         String logMessage = String.format("UI: call to %s.getNoteList()",
@@ -63,7 +63,7 @@ public class NoteRestService {
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "add");
+                "/add");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl)
                         .queryParam("patientId", note.getPatientId())
@@ -88,9 +88,10 @@ public class NoteRestService {
         String logMessage = String.format("UI: call to %s.getNoteById() ",
                 className);
         log.debug(logMessage);
-        String httpUrl = String.format("%s%s",
+        String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
-                noteURL);
+                noteURL,
+                "/get");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("id", i);//?id=0
@@ -111,11 +112,11 @@ public class NoteRestService {
     public void deleteById(String i) {
         String logMessage = String.format("UI: call to %s.deleteNoteById() ",
                 className);
-        log.debug(logMessage);
+        log.info(logMessage);
         String httpUrl = String.format("%s%s%s",
                 noteDockerURI,
                 noteURL,
-                "delete");
+                "/delete");
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(httpUrl).
                         queryParam("id", i);//?id=0

@@ -116,7 +116,7 @@ class NoteControllerTest {
         noteGiven.setId("1");
         Mockito.doNothing().when(noteDalServiceMock).delete(noteGiven.getId());
 
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete("/note")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete("/note/delete")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("id", noteGiven.getId());
 

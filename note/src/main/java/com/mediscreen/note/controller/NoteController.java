@@ -73,7 +73,7 @@ public class NoteController {
         return noteDalService.create(noteToPersist);
     }
 
-    @ApiOperation(value = "Delete specific Note with the supplied Note id", notes= "/note?id=23")
+    @ApiOperation(value = "Delete specific Note with the supplied Note id", notes= "/note/delete?id=23")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully deletes the specific Note"),
             @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
@@ -82,7 +82,7 @@ public class NoteController {
             @ApiResponse(responseCode = "500", description = "Application failed to process the request")
     }
     )
-    @DeleteMapping("")
+    @DeleteMapping("/delete")
     public void deleteNoteById(@RequestParam String id,
                                   HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
         log.info("Note Microservice: EndPoint deleteNote with id: '{}' : URL= '{}' : RESPONSE STATUS= '{}'",
