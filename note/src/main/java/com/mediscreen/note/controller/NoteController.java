@@ -1,5 +1,6 @@
 package com.mediscreen.note.controller;
 
+import com.mediscreen.note.exception.NoteNotFoundException;
 import com.mediscreen.note.model.Note;
 import com.mediscreen.note.service.NoteDalService;
 import io.swagger.annotations.Api;
@@ -71,6 +72,27 @@ public class NoteController {
 
         return noteDalService.create(noteToPersist);
     }
+
+    @ApiOperation(value = "Delete specific Note with the supplied Note id", notes= "/note?id=23")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deletes the specific Note"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to delete is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @DeleteMapping("")
+    public void deleteNoteById(@RequestParam String id,
+                                  HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+        log.info("Note Microservice: EndPoint deleteNote with id: '{}' : URL= '{}' : RESPONSE STATUS= '{}'",
+                id,
+                request.getRequestURI(),
+                response.getStatus());
+        noteDalService.delete(id);
+    }
+
+
 
 
 }
