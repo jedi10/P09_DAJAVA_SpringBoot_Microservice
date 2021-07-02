@@ -8,5 +8,6 @@ public interface INoteDalService {
 
     List<Note> getHistoricalNotes(Integer patientId);
     Note create(Note note);
+    void delete(String id);
 
 }
