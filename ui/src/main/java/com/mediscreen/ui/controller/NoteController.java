@@ -1,5 +1,6 @@
 package com.mediscreen.ui.controller;
 
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.exception.NoteCrudException;
 import com.mediscreen.ui.exception.PatientCrudException;
 import com.mediscreen.ui.model.Note;
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Api(tags = {"UI Note Controller"})
@@ -175,5 +177,53 @@ public class NoteController {
                 response.getStatus());
 
         return "redirect:/note/"+ noteCreated.getPatientId() +"/list";
+    }
+
+    @ApiOperation(value = "Delete specific Note with the supplied Note id", notes= "/note/delete/1")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully deletes the specific Note"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to view the resource"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to delete is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @GetMapping(value = "{patientId}/delete/{id}")
+    public String deleteNote(@PathVariable Integer patientId, @PathVariable("id") String id,
+                             Model model,
+                             HttpServletRequest request, HttpServletResponse response) {
+        Optional<Note> found = Optional.empty();
+        if (localMode){
+            for (Note e : NoteController.noteList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()){
+                Note noteToRemove =  found.get();
+                NoteController.noteList.remove(noteToRemove);
+                log.info("UI: Delete Note on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            }
+        } else {
+
+            Note noteResult = null;
+            try {
+                log.info("UI: Delete Note on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+                noteResult = noteRestService.getById(id);
+                noteRestService.deleteById(id);
+
+            } catch (NotFoundException e) {
+                log.warn("UI: No Note was deleted on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+                model.addAttribute("errorListingNotes", e.getMessage());
+            }
+        }
+        return "redirect:/note/"+ patientId +"/list";
     }
 }

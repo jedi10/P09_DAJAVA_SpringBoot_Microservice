@@ -1,7 +1,10 @@
 package com.mediscreen.ui.service.restTemplateService;
 
+import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.exception.NoteCrudException;
+import com.mediscreen.ui.exception.PatientCrudException;
 import com.mediscreen.ui.model.Note;
+import com.mediscreen.ui.model.Patient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +77,54 @@ public class NoteRestService {
             return responseEntity.getBody();
         } catch (RestClientException exception) {
             String errorMessage = String.format("Exception during %s.addNote: %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
+            throw new NoteCrudException(errorMessage);
+        }
+    }
+
+    public Note getById(String i) {
+        String logMessage = String.format("UI: call to %s.getNoteById() ",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s",
+                noteDockerURI,
+                noteURL);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", i);//?id=0
+        try {
+            ResponseEntity<Note> responseEntity = restTemplate.getForEntity(
+                    uriComponentsBuilder.toUriString(),
+                    Note.class);
+            return responseEntity.getBody();
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.getNoteById : %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
+            throw new NotFoundException(errorMessage);
+        }
+    }
+
+    public void deleteById(String i) {
+        String logMessage = String.format("UI: call to %s.deleteNoteById() ",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s%s",
+                noteDockerURI,
+                noteURL,
+                "delete");
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl).
+                        queryParam("id", i);//?id=0
+
+        try {
+            restTemplate.delete(
+                    uriComponentsBuilder.toUriString());
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.deleteNoteById : %s",
                     className,
                     exception.getMessage());
             log.error(errorMessage);

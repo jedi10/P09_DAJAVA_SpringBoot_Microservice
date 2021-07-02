@@ -1,5 +1,6 @@
 package com.mediscreen.note.service;
 
+import com.mediscreen.note.exception.NoteNotFoundException;
 import com.mediscreen.note.model.Note;
 import com.mediscreen.note.repository.NoteRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +42,27 @@ public class NoteDalService implements INoteDalService {
         return noteRepository.save(note);
     }
 
+    /**
+     * <b>Delete Note</b>
+     * @param id mandatory
+     */
+    @Override
+    public void delete(String id) {
+        log.debug("Call to noteDalService.delete");
+        noteRepository.findById(id)
+                .orElseThrow(()-> new NoteNotFoundException("Note not found with id: "+ id));
+        noteRepository.deleteById(id);
+    }
 
+    /**
+     * <b>Get a Note By Id</b>
+     * @param id mandatory and String type (MongoDB)
+     * @return a Note object
+     */
+    @Override
+    public Note getById(String id) {
+        log.debug("Call to noteDalService.getNote");
+        return noteRepository.findById(id)
+                .orElseThrow(() -> new NoteNotFoundException("Note not found with id:" + id));
+    }
 }
