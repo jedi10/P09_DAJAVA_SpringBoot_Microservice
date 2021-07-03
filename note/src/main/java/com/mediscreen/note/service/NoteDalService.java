@@ -65,4 +65,25 @@ public class NoteDalService implements INoteDalService {
         return noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Note not found with id:" + id));
     }
+
+    /**
+     * <b>Update a note</b>
+     * @param note mandatory
+     * @return a Note Object
+     */
+    @Override
+    public Note update(Note note) {
+        log.debug("Call to noteDalService.update");
+        Note previousNote = noteRepository.findById(note.getId())
+                .orElseThrow(() -> {
+                    log.debug("updateNote: Note not found");
+                    return new NoteNotFoundException("Note not found with id:" + note.getId());
+                });
+        if(previousNote != null){
+            //keep historical safe
+            note.setRecordDate(previousNote.getRecordDate());
+            return noteRepository.save(note);
+        }
+        return null;
+    }
 }
