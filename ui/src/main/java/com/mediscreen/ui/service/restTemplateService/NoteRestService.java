@@ -1,12 +1,12 @@
 package com.mediscreen.ui.service.restTemplateService;
 
+import com.mediscreen.ui.controller.PatientController;
 import com.mediscreen.ui.exception.NotFoundException;
 import com.mediscreen.ui.exception.NoteCrudException;
-import com.mediscreen.ui.exception.PatientCrudException;
 import com.mediscreen.ui.model.Note;
-import com.mediscreen.ui.model.Patient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -126,6 +126,35 @@ public class NoteRestService {
                     uriComponentsBuilder.toUriString());
         } catch (RestClientException exception) {
             String errorMessage = String.format("Exception during %s.deleteNoteById : %s",
+                    className,
+                    exception.getMessage());
+            log.error(errorMessage);
+            throw new NoteCrudException(errorMessage);
+        }
+    }
+
+    public Note update(Note note){
+        String logMessage = String.format("UI: call to %s.updateNote()",
+                className);
+        log.debug(logMessage);
+        String httpUrl = String.format("%s%s%s",
+                noteDockerURI,
+                noteURL,
+                "/update");
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl(httpUrl)
+                        .queryParam("id", note.getId())
+                        .queryParam("patientId", note.getPatientId())
+                        .queryParam("note", note.getNote());
+        try {
+            ResponseEntity<Note> responseEntity = restTemplate.exchange(
+                    uriComponentsBuilder.toUriString(),
+                    HttpMethod.PUT,
+                    null,
+                    Note.class);
+            return responseEntity.getBody();
+        } catch (RestClientException exception) {
+            String errorMessage = String.format("Exception during %s.updateNote: %s",
                     className,
                     exception.getMessage());
             log.error(errorMessage);
