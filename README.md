@@ -71,18 +71,26 @@ if you just want to see a container with MariaDB:
     
 [source](https://serverfault.com/questions/1019091/how-to-import-data-into-a-mariadb-instance-running-in-a-docker-container)
 
+### for MongoDB
+
+A _DockerCompose_ File made a container with MongoDB Database and Docker Express in order to check data or save them (export).
+    
+[source](https://serverfault.com/questions/1019091/how-to-import-data-into-a-mariadb-instance-running-in-a-docker-container)
+
 ## Application End-Points
 
 ### Documentation
 
 End-Points Api Documentation can be find on public html page (swagger):
 
-    http://localhost:8081/swagger-ui.html (for Patient Microservice)
     http://localhost:8091/swagger-ui.html (for UI Project)
+    http://localhost:8085/swagger-ui.html (for Patient Microservice)
+    http://localhost:8071/swagger-ui.html (for Patient Microservice)    
     
 ### UI Project
 Access to the all application go on UI Project which shows all data and interact with all other microservices.
 
-   http://localhost:8091/patient/list
+   http://localhost:8091/  (Home Page) 
+   http://localhost:8091/patient/list (Main Page)
 
 For developers, a local mode to test thymeleaf pages can be activated in PatientControler class.
