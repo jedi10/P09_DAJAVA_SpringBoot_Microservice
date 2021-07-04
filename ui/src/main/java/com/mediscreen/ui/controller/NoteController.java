@@ -49,7 +49,7 @@ public class NoteController {
     private static List<Note> noteList = new ArrayList<>();
     private static Patient patient;
 
-    Boolean localMode = true;
+    Boolean localMode = false;
 
     static {
         int patientId = 1;
@@ -293,17 +293,19 @@ public class NoteController {
                 int index = NoteController.noteList.indexOf(noteToUpdate);
                 NoteController.noteList.get(index).setNote(note.getNote());
             }
-        } /** else {
+        } else {
             try {
                 //Make sure we have a patient
                 patientRestService.getById(note.getPatientId());
+                //Make sure we have a Note
+                noteRestService.getById(note.getId());
                 noteToUpdate = noteRestService.update(note);
 
             } catch (PatientCrudException | NoteCrudException e) {
-                model.addAttribute("errorAddingNote", e.getMessage());
-                return "note/add";
+                model.addAttribute("errorUpdatingNote", e.getMessage());
+                return "note/update";
             }
-        }**/
+        }
         log.info("UI: Note Update on URL: '{}' : Note Updated for PatientId '{}' : RESPONSE STATUS: '{}'",
                 request.getRequestURI(),
                 noteToUpdate.getPatientId() + ": " + noteToUpdate.getNote(),

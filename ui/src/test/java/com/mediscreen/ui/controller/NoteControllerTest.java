@@ -195,4 +195,35 @@ class NoteControllerTest {
         verify(patientRestService, Mockito.times(1)).getById(patientId);
         verify(noteRestService, Mockito.times(1)).getById(noteGiven.getId());
     }
+
+    @DisplayName("Update Note")
+    @Order(5)
+    @Test
+    void updateNote() throws Exception {
+        //***********GIVEN*************
+        noteGiven.setId("1");
+        noteGiven.setRecordDate(null);
+        String uri = "/"+ patientId +"/update";
+        when(patientRestService.getById(anyInt())).thenReturn(patientGiven);
+        when(noteRestService.getById(anyString())).thenReturn(noteGiven);
+        when(noteRestService.update(noteGiven)).thenReturn(noteGiven);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post(rootURL + uri)
+                .param("id", noteGiven.getId())
+                .param("patientId", String.valueOf(patientId))
+                .param("note", noteGiven.getNote())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.TEXT_HTML_VALUE);
+
+        //**************WHEN-THEN****************************
+        MvcResult mvcResult =  mockMvc.perform(builder)//.andDo(print());
+                .andExpect(status().isFound())//302 redirection
+                .andExpect(redirectedUrl(rootURL + "/"+ patientId +"/list"))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/note/"+ patientId +"/list"))
+                .andReturn();
+        verify(patientRestService, Mockito.times(1)).getById(patientId);
+        verify(noteRestService, Mockito.times(1)).getById(noteGiven.getId());
+    }
 }
