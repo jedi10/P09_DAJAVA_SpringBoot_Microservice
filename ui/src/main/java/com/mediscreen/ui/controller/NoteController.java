@@ -98,8 +98,8 @@ public class NoteController {
 
     @ApiOperation(value = "Show Form to create a Note", response = String.class, notes = "Show an empty form to create a Note for one Patient")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully show form to create a new Patient"),
-            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient creation form"),
+            @ApiResponse(responseCode = "200", description = "Successfully show form to create a new Note"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the note creation form"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
             @ApiResponse(responseCode = "500", description = "Application failed to process the request")
@@ -227,6 +227,15 @@ public class NoteController {
         return "redirect:/note/"+ patientId +"/list";
     }
 
+    @ApiOperation(value = "Show Form to update a Note", response = String.class, notes = "Show a filled form to update a Note for one Patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully show form to update a new Note"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient creation form"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @GetMapping("{patientId}/update/{id}")
     public String updateNoteForm(@PathVariable Integer patientId, @PathVariable("id") String id,
                                  Model model,
@@ -263,6 +272,15 @@ public class NoteController {
         return "note/update";
     }
 
+    @ApiOperation(value = "Validate a Note", response = String.class, notes = "User send form to validate and update a Note")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully validate a Note update"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to update Note"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @PostMapping(value = "{patientId}/update") // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE+";charset=UTF-8"})//"application/x-www-form-urlencoded")
     public String updateNote(@PathVariable Integer patientId,
                            @Valid Note note,
