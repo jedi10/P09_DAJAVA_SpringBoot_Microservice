@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NoteDalService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">note</a> &gt; <a href="index.source.html" class="el_package">com.mediscreen.note.service</a> &gt; <span class="el_source">NoteDalService.java</span></div><h1>NoteDalService.java</h1><pre class="source lang-java linenums">package com.mediscreen.note.service;
+
+import com.mediscreen.note.exception.NoteNotFoundException;
+import com.mediscreen.note.model.Note;
+import com.mediscreen.note.repository.NoteRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * &lt;b&gt;DAL Service for Note&lt;/b&gt;
+ * &lt;p&gt;All CRUD operations for Note working with MongoDb (noSQL)&lt;/p&gt;
+ */
+<span class="fc" id="L16">@Slf4j</span>
+@Service
+<span class="fc" id="L18">public class NoteDalService implements INoteDalService {</span>
+
+    @Autowired
+    private NoteRepository noteRepository;
+
+    /**
+     * &lt;b&gt;Get Patient Historical Notes&lt;/b&gt;
+     * @param patientId mandatory id
+     * @return A list of Note
+     */
+    @Override
+    public List&lt;Note&gt; getHistoricalNotes(Integer patientId) {
+<span class="fc" id="L30">        log.debug(&quot;Call to noteDalService.getHistoricalNotes&quot;);</span>
+<span class="fc" id="L31">        return noteRepository.findByPatientIdOrderByRecordDateAsc(patientId);</span>
+    }
+
+    /**
+     * &lt;b&gt;Create Note&lt;/b&gt;
+     * @param note mandatory
+     * @return note when persistence successful
+     */
+    @Override
+    public Note create(Note note) {
+<span class="fc" id="L41">        log.debug(&quot;Call to noteDalService.create&quot;);</span>
+<span class="fc" id="L42">        return noteRepository.save(note);</span>
+    }
+
+    /**
+     * &lt;b&gt;Delete Note&lt;/b&gt;
+     * @param id mandatory
+     */
+    @Override
+    public void delete(String id) {
+<span class="fc" id="L51">        log.debug(&quot;Call to noteDalService.delete&quot;);</span>
+<span class="fc" id="L52">        noteRepository.findById(id)</span>
+<span class="pc" id="L53">                .orElseThrow(()-&gt; new NoteNotFoundException(&quot;Note not found with id: &quot;+ id));</span>
+<span class="fc" id="L54">        noteRepository.deleteById(id);</span>
+<span class="fc" id="L55">    }</span>
+
+    /**
+     * &lt;b&gt;Get a Note By Id&lt;/b&gt;
+     * @param id mandatory and String type (MongoDB)
+     * @return a Note object
+     */
+    @Override
+    public Note getById(String id) {
+<span class="fc" id="L64">        log.debug(&quot;Call to noteDalService.getNote&quot;);</span>
+<span class="fc" id="L65">        return noteRepository.findById(id)</span>
+<span class="pc" id="L66">                .orElseThrow(() -&gt; new NoteNotFoundException(&quot;Note not found with id:&quot; + id));</span>
+    }
+
+    /**
+     * &lt;b&gt;Update a note&lt;/b&gt;
+     * @param note mandatory
+     * @return a Note Object
+     */
+    @Override
+    public Note update(Note note) {
+<span class="fc" id="L76">        log.debug(&quot;Call to noteDalService.update&quot;);</span>
+<span class="fc" id="L77">        Note previousNote = noteRepository.findById(note.getId())</span>
+<span class="fc" id="L78">                .orElseThrow(() -&gt; {</span>
+<span class="nc" id="L79">                    log.debug(&quot;updateNote: Note not found&quot;);</span>
+<span class="nc" id="L80">                    return new NoteNotFoundException(&quot;Note not found with id:&quot; + note.getId());</span>
+                });
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if(previousNote != null){</span>
+            //keep historical safe
+<span class="fc" id="L84">            note.setRecordDate(previousNote.getRecordDate());</span>
+<span class="fc" id="L85">            return noteRepository.save(note);</span>
+        }
+<span class="nc" id="L87">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

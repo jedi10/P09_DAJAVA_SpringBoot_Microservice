@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Note.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">note</a> &gt; <a href="index.source.html" class="el_package">com.mediscreen.note.model</a> &gt; <span class="el_source">Note.java</span></div><h1>Note.java</h1><pre class="source lang-java linenums">package com.mediscreen.note.model;
+
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+
+@Document(collection=&quot;Note&quot;)
+<span class="pc bpc" id="L20" title="4 of 30 branches missed.">@Data</span>
+<span class="fc" id="L21">@NoArgsConstructor</span>
+public class Note {
+
+    @EqualsAndHashCode.Exclude
+    @Id
+<span class="fc" id="L26">    private String id;</span>
+
+    @NotNull(message=&quot;{Note.patientId.mandatory}&quot;)
+<span class="fc" id="L29">    private Integer patientId;</span>
+
+    @NotBlank(message = &quot;{Note.note.mandatory}&quot;)
+<span class="fc" id="L32">    private String note;</span>
+
+    @JsonFormat(pattern = &quot;yyyy-MM-dd&quot;)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+<span class="fc" id="L37">    private LocalDate recordDate;</span>
+
+    public Note(@NotNull(message = &quot;{Note.patientId.mandatory}&quot;) Integer patientId,
+                @NotBlank(message = &quot;{Note.note.mandatory}&quot;) String note,
+<span class="fc" id="L41">                LocalDate recordDate) {</span>
+<span class="fc" id="L42">        this.patientId = patientId;</span>
+<span class="fc" id="L43">        this.note = note;</span>
+<span class="fc" id="L44">        this.recordDate = recordDate;</span>
+<span class="fc" id="L45">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
