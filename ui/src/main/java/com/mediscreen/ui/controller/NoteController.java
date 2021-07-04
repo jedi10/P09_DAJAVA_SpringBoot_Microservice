@@ -226,4 +226,40 @@ public class NoteController {
         }
         return "redirect:/note/"+ patientId +"/list";
     }
+
+    @GetMapping("{patientId}/update/{id}")
+    public String updateNoteForm(@PathVariable Integer patientId, @PathVariable("id") String id,
+                                 Model model,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        if (localMode){
+            Optional<Note> found = Optional.empty();
+            for (Note e : NoteController.noteList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()){
+                Note noteToUpdate =  found.get();
+                model.addAttribute("note", noteToUpdate);
+                model.addAttribute("patient", NoteController.patient);
+                log.info("UI: Show Update Note Form on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            }
+        } else {
+            try {
+                Patient patient = patientRestService.getById(patientId);
+                model.addAttribute("patient", patient);
+                Note note = noteRestService.getById(id);
+                model.addAttribute("note", note);
+            }
+            catch (NotFoundException notFoundException)
+            {
+                model.addAttribute("errorUpdatingNote", notFoundException.getMessage());
+                return "redirect:/note/"+ patientId +"/list";
+            }
+        }
+        return "note/update";
+    }
 }
