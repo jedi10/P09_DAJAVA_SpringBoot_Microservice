@@ -142,4 +142,33 @@ class NoteControllerTest {
 
         verify(noteDalServiceMock, Mockito.times(1)).getById(noteGiven.getId());
     }
+
+    @Order(5)
+    @Test
+    void updateNote() throws Exception {
+        //GIVEN
+        noteGiven.setId("1");
+        noteGiven.setRecordDate(null);
+        when(noteDalServiceMock.update(noteGiven)).thenReturn(noteGiven);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/note/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("id", noteGiven.getId())
+                .param("patientId", noteGiven.getPatientId().toString())
+                .param("note",noteGiven.getNote());
+
+        MvcResult mvcResult =
+                mockMvc.perform(builder)//.andDo(print());
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn();
+
+        verify(noteDalServiceMock, Mockito.times(1)).update(noteGiven);
+        //*********************************************************
+        //**************CHECK RESPONSE CONTENT*********************
+        //*********************************************************
+        String jsonResult = mvcResult.getResponse().getContentAsString();
+        String expectedJson = objectMapper.writeValueAsString(noteGiven);
+        JSONAssert.assertEquals(expectedJson, jsonResult, true);
+    }
 }

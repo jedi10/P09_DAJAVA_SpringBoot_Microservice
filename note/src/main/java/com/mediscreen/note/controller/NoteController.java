@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -110,7 +111,26 @@ public class NoteController {
         return noteDalService.getById(id);
     }
 
-
-
-
+    @ApiOperation(value = "Update a Note", response = Note.class, notes = "/note/update?id=1234567&patientId=1&note=sucreGlycemie")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully update a new Note"),
+            @ApiResponse(responseCode = "401", description = "You are not authorized to update this Note"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @PutMapping("/update")
+    public Note updateNote(@RequestParam String id, @RequestParam Integer patientId, @RequestParam String note,
+                                 HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+        log.info("Note Microservice: updateNote EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                request.getRequestURI(),
+                response.getStatus());
+        Note noteToPersist = new Note(
+                patientId,
+                URLDecoder.decode(note, StandardCharsets.UTF_8),
+                null);
+        noteToPersist.setId(id);
+        return noteDalService.update(noteToPersist);
+    }
 }

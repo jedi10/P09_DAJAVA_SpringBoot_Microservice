@@ -98,8 +98,8 @@ public class NoteController {
 
     @ApiOperation(value = "Show Form to create a Note", response = String.class, notes = "Show an empty form to create a Note for one Patient")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully show form to create a new Patient"),
-            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient creation form"),
+            @ApiResponse(responseCode = "200", description = "Successfully show form to create a new Note"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the note creation form"),
             @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
             @ApiResponse(responseCode = "500", description = "Application failed to process the request")
@@ -225,5 +225,110 @@ public class NoteController {
             }
         }
         return "redirect:/note/"+ patientId +"/list";
+    }
+
+    @ApiOperation(value = "Show Form to update a Note", response = String.class, notes = "Show a filled form to update a Note for one Patient")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully show form to update a new Note"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient creation form"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @GetMapping("{patientId}/update/{id}")
+    public String updateNoteForm(@PathVariable Integer patientId, @PathVariable("id") String id,
+                                 Model model,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        if (localMode){
+            Optional<Note> found = Optional.empty();
+            for (Note e : NoteController.noteList) {
+                if (e.getId().equals(id)) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()){
+                Note noteToUpdate =  found.get();
+                model.addAttribute("note", noteToUpdate);
+                model.addAttribute("patient", NoteController.patient);
+                log.info("UI: Show Update Note Form on URL: '{}' : RESPONSE STATUS: '{}'",
+                        request.getRequestURI(),
+                        response.getStatus());
+            }
+        } else {
+            try {
+                Patient patient = patientRestService.getById(patientId);
+                model.addAttribute("patient", patient);
+                Note note = noteRestService.getById(id);
+                model.addAttribute("note", note);
+            }
+            catch (NotFoundException notFoundException)
+            {
+                model.addAttribute("errorUpdatingNote", notFoundException.getMessage());
+                return "redirect:/note/"+ patientId +"/list";
+            }
+        }
+        return "note/update";
+    }
+
+    @ApiOperation(value = "Validate a Note", response = String.class, notes = "User send form to validate and update a Note")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully validate a Note update"),
+            @ApiResponse(responseCode = "401", description = "you are not authorized to update Note"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
+    @PostMapping(value = "{patientId}/update") // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE+";charset=UTF-8"})//"application/x-www-form-urlencoded")
+    public String updateNote(@PathVariable Integer patientId,
+                           @Valid Note note,
+                           BindingResult result,
+                           Model model,
+                           HttpServletRequest request, HttpServletResponse response) {
+        if (result.hasErrors()) {
+            log.warn("UI: Note Update Error on URL: '{}': Error Field(s): '{}' : RESPONSE STATUS: '{}'",
+                    request.getRequestURI(),
+                    result.getFieldErrors().stream()
+                            .map(e-> e.getField().toUpperCase())
+                            .distinct()
+                            .collect(Collectors.joining(", ")),
+                    response.getStatus());
+            return "redirect:/note/"+ patientId +"/update/"+ note.getId();
+        }
+        Note noteToUpdate = null;
+        if (localMode){
+            Optional<Note> found = Optional.empty();
+            for (Note e : NoteController.noteList) {
+                if (e.getId().equals(note.getId())) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()) {
+                noteToUpdate = found.get();
+                int index = NoteController.noteList.indexOf(noteToUpdate);
+                NoteController.noteList.get(index).setNote(note.getNote());
+            }
+        } else {
+            try {
+                //Make sure we have a patient
+                patientRestService.getById(note.getPatientId());
+                //Make sure we have a Note
+                noteRestService.getById(note.getId());
+                noteToUpdate = noteRestService.update(note);
+
+            } catch (PatientCrudException | NoteCrudException e) {
+                model.addAttribute("errorUpdatingNote", e.getMessage());
+                return "note/update";
+            }
+        }
+        log.info("UI: Note Update on URL: '{}' : Note Updated for PatientId '{}' : RESPONSE STATUS: '{}'",
+                request.getRequestURI(),
+                noteToUpdate.getPatientId() + ": " + noteToUpdate.getNote(),
+                response.getStatus());
+
+        return "redirect:/note/"+ noteToUpdate.getPatientId() +"/list";
     }
 }

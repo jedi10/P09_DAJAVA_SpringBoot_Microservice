@@ -144,6 +144,45 @@ class NoteDalServiceTest {
         verify(noteRepositoryMock, Mockito.times(1)).findById(noteGiven.getId());
     }
 
+    @Order(7)
+    @Test
+    void update_ok() {
+        //GIVEN
+        noteGiven.setId("1");
+        when(noteRepositoryMock.findById(noteGiven.getId())).thenReturn(java.util.Optional.ofNullable(noteGiven));
+        when(noteRepositoryMock.save(noteGiven)).thenReturn(noteGiven);
+
+        //WHEN
+        Note noteResult = noteDalService.update(noteGiven);
+
+        //THEN
+        assertNotNull(noteResult);
+        assertEquals(noteGiven, noteResult);
+        verify(noteRepositoryMock, Mockito.times(1)).findById(noteGiven.getId());
+        verify(noteRepositoryMock, Mockito.times(1)).save(noteGiven);
+    }
+
+    @DisplayName("update failed: note Not Found")
+    @Order(8)
+    @Test
+    void update_noteNotFound() {
+        //GIVEN
+        noteGiven.setId("1");
+        when(noteRepositoryMock.findById(noteGiven.getId())).thenThrow(
+                new NoteNotFoundException("Note not found with id"));
+        when(noteRepositoryMock.save(noteGiven)).thenReturn(noteGiven);
+
+        //WHEN
+        Exception exception = assertThrows(NoteNotFoundException.class,
+                ()-> noteDalService.update(noteGiven)
+        );
+
+        //THEN
+        assertNotNull(exception);
+        assertTrue(exception.getMessage().contains("Note not found with id"));
+        verify(noteRepositoryMock, Mockito.times(1)).findById(noteGiven.getId());
+        verify(noteRepositoryMock, Mockito.never()).save(noteGiven);
+    }
 }
 
 //https://stackoverflow.com/questions/2276271/how-to-mock-void-methods-with-mockito

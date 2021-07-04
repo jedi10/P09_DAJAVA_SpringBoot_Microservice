@@ -10,5 +10,6 @@ public interface INoteDalService {
     Note create(Note note);
     void delete(String id);
     Note getById(String id);
+    Note update(Note note);
 
 }

@@ -234,4 +234,34 @@ class NoteRestServiceTest {
         //THEN
         this.mockServer.verify();
     }
+
+    @Order(7)
+    @Test
+    void updateNote() throws JsonProcessingException {
+        //Given
+        String idOnTest = "0";
+        int patientId = 1;
+        Note noteGiven = new Note(patientId,"premiere_visite_au_centre_medical;_injection_vaccin",
+                LocalDate.now().minus(3, ChronoUnit.DAYS));
+        noteGiven.setId(idOnTest);
+
+        String json = this.objectMapper
+                .writeValueAsString(noteGiven);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://note:8071/note/update")
+                        .queryParam("id", noteGiven.getId())
+                        .queryParam("patientId", noteGiven.getPatientId())
+                        .queryParam("note", noteGiven.getNote());
+        this.mockServer
+                .expect(requestTo(uriComponentsBuilder.toUriString()))
+                .andExpect(method(HttpMethod.PUT))
+                .andRespond(withSuccess(json, MediaType.APPLICATION_JSON));
+        //WHEN
+        Note noteResult = noteRestService.update(noteGiven);
+
+        //THEN
+        this.mockServer.verify();
+        assertNotNull(noteResult);
+        assertEquals(noteGiven, noteResult);
+    }
 }
