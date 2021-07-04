@@ -49,7 +49,7 @@ public class NoteController {
     private static List<Note> noteList = new ArrayList<>();
     private static Patient patient;
 
-    Boolean localMode = false;
+    Boolean localMode = true;
 
     static {
         int patientId = 1;
@@ -261,5 +261,54 @@ public class NoteController {
             }
         }
         return "note/update";
+    }
+
+    @PostMapping(value = "{patientId}/update") // consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE+";charset=UTF-8"})//"application/x-www-form-urlencoded")
+    public String updateNote(@PathVariable Integer patientId,
+                           @Valid Note note,
+                           BindingResult result,
+                           Model model,
+                           HttpServletRequest request, HttpServletResponse response) {
+        if (result.hasErrors()) {
+            log.warn("UI: Note Update Error on URL: '{}': Error Field(s): '{}' : RESPONSE STATUS: '{}'",
+                    request.getRequestURI(),
+                    result.getFieldErrors().stream()
+                            .map(e-> e.getField().toUpperCase())
+                            .distinct()
+                            .collect(Collectors.joining(", ")),
+                    response.getStatus());
+            return "redirect:/note/"+ patientId +"/update/"+ note.getId();
+        }
+        Note noteToUpdate = null;
+        if (localMode){
+            Optional<Note> found = Optional.empty();
+            for (Note e : NoteController.noteList) {
+                if (e.getId().equals(note.getId())) {
+                    found = Optional.of(e);
+                    break;
+                }
+            }
+            if (found.isPresent()) {
+                noteToUpdate = found.get();
+                int index = NoteController.noteList.indexOf(noteToUpdate);
+                NoteController.noteList.get(index).setNote(note.getNote());
+            }
+        } /** else {
+            try {
+                //Make sure we have a patient
+                patientRestService.getById(note.getPatientId());
+                noteToUpdate = noteRestService.update(note);
+
+            } catch (PatientCrudException | NoteCrudException e) {
+                model.addAttribute("errorAddingNote", e.getMessage());
+                return "note/add";
+            }
+        }**/
+        log.info("UI: Note Update on URL: '{}' : Note Updated for PatientId '{}' : RESPONSE STATUS: '{}'",
+                request.getRequestURI(),
+                noteToUpdate.getPatientId() + ": " + noteToUpdate.getNote(),
+                response.getStatus());
+
+        return "redirect:/note/"+ noteToUpdate.getPatientId() +"/list";
     }
 }
