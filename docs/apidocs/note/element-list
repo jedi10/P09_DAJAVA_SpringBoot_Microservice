@@ -1,0 +1,6 @@
+com.mediscreen.note
+com.mediscreen.note.controller
+com.mediscreen.note.exception
+com.mediscreen.note.model
+com.mediscreen.note.repository
+com.mediscreen.note.service
