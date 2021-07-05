@@ -27,7 +27,8 @@ The project use [Spring Boot 2.5.1](https://start.spring.io)
     Spring Web (Tomcat),    
     Spring Validation,
     Spring Data JPA,
-    Mysql-connector-java    
+    Mysql-connector-java
+    Spring-boot-starter-data-mongodb    
     Lombok,
     Swagger,
     Docker,
@@ -46,7 +47,7 @@ The project use [Spring Boot 2.5.1](https://start.spring.io)
         docker compose up -d (main instruction for project dockerization)
      * -d run the container in detached mode = in the background
      
-  * Go on Mediscreen Application
+  * Go on Mediscreen Application with a web browser:
 
         http://localhost:8091/  (Home Page) 
 
@@ -97,7 +98,7 @@ Central Project is UI Project which shows all data and interact with all microse
     http://localhost:8091/  (Home Page) 
     http://localhost:8091/patient/list (Main Page)
     
-For developers, a local mode to test thymeleaf pages can be activated in PatientController class.
+For developers, a local mode to test thymeleaf pages can be activated in UI PatientController and UI NoteController class.
 
 ## Application End-Points
 
