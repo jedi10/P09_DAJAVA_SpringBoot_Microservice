@@ -23,7 +23,7 @@ public class PatientRestService {
     RestTemplate restTemplate;
 
     public static final String className = PatientRestService.class.getSimpleName();
-    public static final String patientDockerURI = "http://patient:8081";
+    public static final String patientDockerURI = "http://patient:8085";
     public static final String patientURL = "/patient";
 
     public List<Patient> getList() {

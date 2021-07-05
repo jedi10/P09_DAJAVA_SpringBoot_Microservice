@@ -144,7 +144,7 @@ public class PatientController {
         return "patient/list";
     }
 
-    @ApiOperation(value = "Show Form to update a Patient", response = String.class, notes = "Show a filled form to update a Patient")
+    @ApiOperation(value = "Show Form to update a Patient", response = String.class, notes = "Show a filled form to update a Patient; /patient/update/23")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully show form to update a Patient"),
             @ApiResponse(responseCode = "401", description = "you are not authorized to see the patient update form"),
@@ -185,6 +185,15 @@ public class PatientController {
         return "patient/update";
     }
 
+    @ApiOperation(value = "Validate a Patient for Update", response = String.class, notes = "User send form to validate and update a Patient; /patient/update/23")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully validate data for updating Patient"),
+            @ApiResponse(responseCode = "401", description = "Already registered: you are not authorized to create twice the same Patient"),
+            @ApiResponse(responseCode = "403", description = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(responseCode = "404", description = "The resource you were trying to reach is not found"),
+            @ApiResponse(responseCode = "500", description = "Application failed to process the request")
+    }
+    )
     @PostMapping("update/{id}")
     public String updatePatient(@PathVariable("id") Integer id, @Valid Patient patient, BindingResult result, Model model,
                                 HttpServletRequest request, HttpServletResponse response) {

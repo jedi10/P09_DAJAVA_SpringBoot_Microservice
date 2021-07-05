@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NoteController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">note</a> &gt; <a href="index.source.html" class="el_package">com.mediscreen.note.controller</a> &gt; <span class="el_source">NoteController.java</span></div><h1>NoteController.java</h1><pre class="source lang-java linenums">package com.mediscreen.note.controller;
+
+import com.mediscreen.note.exception.NoteNotFoundException;
+import com.mediscreen.note.model.Note;
+import com.mediscreen.note.service.NoteDalService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
+<span class="fc" id="L25">@Slf4j</span>
+@Api(tags = {&quot;Microservice Note Controller&quot;})
+@Tag(name = &quot;Microservice Note Controller&quot;, description = &quot;Note Microservice deals with Patient Historical Notes&quot;)
+@RestController
+@RequestMapping(&quot;/note&quot;)
+<span class="fc" id="L30">public class NoteController {</span>
+
+    @Autowired
+    private NoteDalService noteDalService;
+
+    @ApiOperation(value = &quot;Get List of Note (Patient Historical)&quot;, response= Collection.class)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully get a list of Note&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;You are not authorized to view the resource&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Accessing the resource you were trying to reach is forbidden&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The resource you were trying to reach is not found&quot;),
+            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Application failed to process the request&quot;)
+    }
+    )
+    @GetMapping(&quot;&quot;)
+    public List&lt;Note&gt; getHistoricalNotes(@RequestParam Integer patientId,
+                                         HttpServletRequest request, HttpServletResponse response) {
+<span class="fc" id="L47">        log.info(&quot;Note Microservice: getAllNotes for PatientId: {} EndPoint: URL= '{}' : RESPONSE STATUS= '{}'&quot;,</span>
+                patientId,
+<span class="fc" id="L49">                request.getRequestURI(),</span>
+<span class="fc" id="L50">                response.getStatus());</span>
+<span class="fc" id="L51">        return noteDalService.getHistoricalNotes(patientId);</span>
+    }
+
+    @ApiOperation(value = &quot;Add a Note&quot;, response = Note.class, notes = &quot;/note/add?patientId=1&amp;note=first visite in center for vaccination&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;201&quot;, description = &quot;Successfully created a new Note&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;You are not authorized to create Note&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Accessing the resource you were trying to reach is forbidden&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The resource you were trying to reach is not found&quot;),
+            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Application failed to process the request&quot;)
+    }
+    )
+    @PostMapping(&quot;/add&quot;)
+    public Note addNote(@RequestParam Integer patientId, @RequestParam String note,
+                              HttpServletRequest request, HttpServletResponse response) {
+<span class="fc" id="L66">        log.info(&quot;Note Microservice: addNote EndPoint: URL= '{}' : RESPONSE STATUS= '{}'&quot;,</span>
+<span class="fc" id="L67">                request.getRequestURI(),</span>
+<span class="fc" id="L68">                response.getStatus());</span>
+<span class="fc" id="L69">        Note noteToPersist = new Note(</span>
+                patientId,
+<span class="fc" id="L71">                URLDecoder.decode(note, StandardCharsets.UTF_8),</span>
+<span class="fc" id="L72">                LocalDate.now());</span>
+
+<span class="fc" id="L74">        return noteDalService.create(noteToPersist);</span>
+    }
+
+    @ApiOperation(value = &quot;Delete specific Note with the supplied Note id&quot;, notes= &quot;/note/delete?id=23&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully deletes the specific Note&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;You are not authorized to view the resource&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Accessing the resource you were trying to reach is forbidden&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The resource you were trying to delete is not found&quot;),
+            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Application failed to process the request&quot;)
+    }
+    )
+    @DeleteMapping(&quot;/delete&quot;)
+    public void deleteNoteById(@RequestParam String id,
+                                  HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+<span class="fc" id="L89">        log.info(&quot;Note Microservice: EndPoint deleteNote with id: '{}' : URL= '{}' : RESPONSE STATUS= '{}'&quot;,</span>
+                id,
+<span class="fc" id="L91">                request.getRequestURI(),</span>
+<span class="fc" id="L92">                response.getStatus());</span>
+<span class="fc" id="L93">        noteDalService.delete(id);</span>
+<span class="fc" id="L94">    }</span>
+
+    @ApiOperation(value = &quot;Get a Note with id&quot;, response= Note.class, notes= &quot;/note?id=1&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully get the Note with the supplied id&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;You are not authorized to view the resource&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Accessing the resource you were trying to reach is forbidden&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The resource you were trying to reach is not found&quot;),
+            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Application failed to process the request&quot;)
+    }
+    )
+    @GetMapping(&quot;/get&quot;)
+    public Note getById(@RequestParam String id,
+                              HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+<span class="fc" id="L108">        log.info(&quot;Note Microservice: getNote with id EndPoint: URL= '{}' : RESPONSE STATUS= '{}'&quot;,</span>
+<span class="fc" id="L109">                request.getRequestURI(),</span>
+<span class="fc" id="L110">                response.getStatus());</span>
+<span class="fc" id="L111">        return noteDalService.getById(id);</span>
+    }
+
+    @ApiOperation(value = &quot;Update a Note&quot;, response = Note.class, notes = &quot;/note/update?id=1234567&amp;patientId=1&amp;note=sucreGlycemie&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successfully update a new Note&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;You are not authorized to update this Note&quot;),
+            @ApiResponse(responseCode = &quot;403&quot;, description = &quot;Accessing the resource you were trying to reach is forbidden&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;The resource you were trying to reach is not found&quot;),
+            @ApiResponse(responseCode = &quot;500&quot;, description = &quot;Application failed to process the request&quot;)
+    }
+    )
+    @PutMapping(&quot;/update&quot;)
+    public Note updateNote(@RequestParam String id, @RequestParam Integer patientId, @RequestParam String note,
+                                 HttpServletRequest request, HttpServletResponse response) throws NoteNotFoundException {
+<span class="fc" id="L126">        log.info(&quot;Note Microservice: updateNote EndPoint: URL= '{}' : RESPONSE STATUS= '{}'&quot;,</span>
+<span class="fc" id="L127">                request.getRequestURI(),</span>
+<span class="fc" id="L128">                response.getStatus());</span>
+<span class="fc" id="L129">        Note noteToPersist = new Note(</span>
+                patientId,
+<span class="fc" id="L131">                URLDecoder.decode(note, StandardCharsets.UTF_8),</span>
+                null);
+<span class="fc" id="L133">        noteToPersist.setId(id);</span>
+<span class="fc" id="L134">        return noteDalService.update(noteToPersist);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
