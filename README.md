@@ -112,7 +112,7 @@ For developers, a local mode to test thymeleaf pages can be activated in UI Pati
 
 ### UI End-Points for Thymeleaf pages
 
-[![Swagger Capture for UI](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerUi.png)][3]
+[![Swagger Capture for UI](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerUI.png)][3]
 
 ### Swagger URL
 
