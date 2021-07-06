@@ -1,13 +1,14 @@
 package com.mediscreen.risk.model;
 
 /**
- * <b>Used by Risk Model</b>
- * @see com.mediscreen.risk.model.Risk
+ * <b>Used with Patient Model</b>
+ * @see com.mediscreen.risk.model.Patient
  */
 public enum HumanGender {
     WOMEN("F"),
     MEN("M"),
-    TRANSGENRE("T");
+    TRANSGENRE("T"),
+    UNDEFINED("");
 
     private String label;
 
@@ -19,4 +20,12 @@ public enum HumanGender {
         return this.label;
     }
 
+    public static HumanGender getHumanGender(String ref){
+        for (HumanGender each: values()){
+            if (each.toString().equalsIgnoreCase(ref)){
+                return each;
+            }
+        }
+        return UNDEFINED;
+    }
 }

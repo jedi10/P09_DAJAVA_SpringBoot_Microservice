@@ -3,7 +3,6 @@ package com.mediscreen.risk.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
@@ -25,4 +24,8 @@ public class Patient {
     private String address;
 
     private String phone;
+
+    public HumanGender getGender(){
+        return HumanGender.getHumanGender(sex);
+    }
 }
