@@ -1,8 +1,6 @@
 package com.mediscreen.risk.model;
 
 import com.mediscreen.risk.utils.DatesUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +11,7 @@ import java.util.StringJoiner;
 public class Risk {
     private Patient patient;
     private int age;
-    private RiskEnum riskEnum;
+    private RiskLevelEnum riskLevelEnum;
 
     public Risk(Patient patient) {
         this.patient = patient;
@@ -29,7 +27,7 @@ public class Risk {
         StringJoiner strJoiner = new StringJoiner(" ");
         strJoiner.add("Patient:").add(patient.getFirstName()).add(patient.getLastName())
                 .add("(age").add(this.age+")")
-                .add("diabetes assessment is:").add(riskEnum.getLabel());
+                .add("diabetes assessment is:").add(riskLevelEnum.getLabel());
         return strJoiner.toString();
     }
 }

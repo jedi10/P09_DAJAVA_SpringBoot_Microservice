@@ -3,7 +3,7 @@ package com.mediscreen.risk.services;
 import com.mediscreen.risk.model.Note;
 import com.mediscreen.risk.model.Patient;
 import com.mediscreen.risk.model.Risk;
-import com.mediscreen.risk.model.RiskEnum;
+import com.mediscreen.risk.model.RiskLevelEnum;
 import com.mediscreen.risk.services.restTemplateService.NoteRestService;
 import com.mediscreen.risk.services.restTemplateService.PatientRestService;
 import com.mediscreen.risk.utils.ListUtils;
@@ -78,7 +78,7 @@ class RiskServiceTest {
 
         //THEN
         assertNotNull(risk);
-        assertEquals(RiskEnum.BORDERLINE, risk.getRiskEnum());
+        assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
     }
 
     @Order(3)
@@ -97,7 +97,7 @@ class RiskServiceTest {
 
         //THEN
         assertNotNull(risk);
-        assertEquals(RiskEnum.BORDERLINE, risk.getRiskEnum());
+        assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
     }
 
 

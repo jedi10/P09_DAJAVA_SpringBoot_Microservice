@@ -4,7 +4,7 @@ package com.mediscreen.risk.model;
  * <b>Used by Risk Model</b>
  * @see com.mediscreen.risk.model.Risk
  */
-public enum RiskEnum {
+public enum RiskLevelEnum {
     NONE("No Risk"),
     BORDERLINE("Limited Risk"),
     DANGER("In Danger"),
@@ -12,7 +12,7 @@ public enum RiskEnum {
 
     private String label;
 
-    RiskEnum(String text) {
+    RiskLevelEnum(String text) {
         this.label = text;
     }
 

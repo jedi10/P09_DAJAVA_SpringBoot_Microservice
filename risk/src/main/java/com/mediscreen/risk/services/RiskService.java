@@ -68,20 +68,20 @@ public class RiskService {
 
         long riskIteration = countRiskIteration(patientNotes);
 
-        riskResult.setRiskEnum(getRiskEnum(riskIteration));
+        riskResult.setRiskLevelEnum(getRiskEnum(riskIteration));
 
         return riskResult;
     }
 
-    static RiskEnum getRiskEnum(long riskIteration) {
+    static RiskLevelEnum getRiskEnum(long riskIteration) {
         if (riskIteration >= 8) {
-            return RiskEnum.EARLY_ONSET;
+            return RiskLevelEnum.EARLY_ONSET;
         } else if (riskIteration >= 6) {
-            return RiskEnum.DANGER;
+            return RiskLevelEnum.DANGER;
         } else if (riskIteration >= 2) {
-            return RiskEnum.BORDERLINE;
+            return RiskLevelEnum.BORDERLINE;
         } else {
-            return RiskEnum.NONE;
+            return RiskLevelEnum.NONE;
         }
     }
 
