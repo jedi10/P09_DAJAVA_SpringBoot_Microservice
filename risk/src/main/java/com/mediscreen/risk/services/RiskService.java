@@ -3,7 +3,9 @@ package com.mediscreen.risk.services;
 import com.mediscreen.risk.exception.NotFoundException;
 import com.mediscreen.risk.model.Patient;
 import com.mediscreen.risk.model.Risk;
+import com.mediscreen.risk.services.restTemplateService.PatientRestService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class RiskService {
+
+    @Autowired
+    private PatientRestService patientRestService;
 
     /**
      * <b>get Risk for patient with patientId</b>
@@ -22,7 +27,7 @@ public class RiskService {
      */
     public Risk getRisk(int patientId) {
         try {
-            //Patient patient = patientRestTemplate.getPatient(patientId);
+            Patient patient = patientRestService.getById(patientId);
             return null;// evaluateRisk(patient);
         } catch (NotFoundException notFoundException) {
             log.debug("Patient Not Found: Risk Not Evaluated");
@@ -39,7 +44,7 @@ public class RiskService {
      */
     public Risk getRisk(String familyName) {
         try {
-            //Patient patient = patientRestTemplate.getPatient(familyName);
+            Patient patient = patientRestService.getByFamilyName(familyName);
             return null;// evaluateRisk(patient);
         } catch (NotFoundException notFoundException) {
             log.debug("Patient Not Found: Risk Not Evaluated");
