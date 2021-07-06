@@ -36,7 +36,7 @@ class RiskServiceTest {
     @Autowired
     private RiskService riskService;
 
-    List<Note> buildNoteWithRisk(int riskNumber)
+    List<Note> buildNoteWithDistinctRisk(int riskNumber)
     {
         List<Note> noteBuildList = new ArrayList<>();
         StringJoiner noteDetails = null;
@@ -53,10 +53,10 @@ class RiskServiceTest {
     void countIterationRisk(){
         //Given
         int riskNumber = 3;
-        List<Note> noteGiven = buildNoteWithRisk(riskNumber);
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
 
         //When
-        long result = RiskService.countRiskIteration(noteGiven);
+        long result = RiskService.distinctRiskIteration(noteGiven);
 
         //Then
         assertEquals(riskNumber, result);
@@ -64,13 +64,29 @@ class RiskServiceTest {
 
     @Order(2)
     @Test
+    void countIterationRiskWithDuplicate(){
+        //Given
+        int riskNumber = 3;
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
+        String doublon = "Mes notes du jour:  "+ ListUtils.getRiskFactors().get(1)+";";
+        noteGiven.add(new Note(1, doublon, LocalDate.now()));
+
+        //When
+        long result = RiskService.distinctRiskIteration(noteGiven);
+
+        //Then
+        assertEquals(riskNumber, result);
+    }
+
+    @Order(3)
+    @Test
     void getRiskByPatientId(){
         //Given
         Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(1996,12,31),"1 Brookside St","100-222-3333");
         when(patientRestService.getById(patient.getId())).thenReturn(patient);
 
         int riskNumber = 3;
-        List<Note> noteGiven = buildNoteWithRisk(riskNumber);
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
         when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
 
         //WHEN
@@ -81,7 +97,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
     }
 
-    @Order(3)
+    @Order(4)
     @Test
     void getRiskByPatientLastName(){
         //Given
@@ -89,7 +105,7 @@ class RiskServiceTest {
         when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
 
         int riskNumber = 3;
-        List<Note> noteGiven = buildNoteWithRisk(riskNumber);
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
         when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
 
         //WHEN

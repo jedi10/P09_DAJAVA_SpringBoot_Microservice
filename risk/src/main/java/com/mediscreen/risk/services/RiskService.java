@@ -66,7 +66,7 @@ public class RiskService {
 
         List<Note> patientNotes = noteRestService.getList(patient.getId());
 
-        long riskIteration = countRiskIteration(patientNotes);
+        long riskIteration = distinctRiskIteration(patientNotes);
 
         riskResult.setRiskLevelEnum(getRiskEnum(riskIteration));
 
@@ -85,17 +85,20 @@ public class RiskService {
         }
     }
 
-    static long countRiskIteration(List<Note> noteList) {
+    static long distinctRiskIteration(List<Note> noteList) {
         List<String> riskList = ListUtils.getRiskFactors();
 
         AtomicLong iteration = new AtomicLong();
 
-        riskList.forEach(risk->
-            iteration.set(iteration.get() + noteList.stream()
-                    .filter((note) ->
-                            note.getNote().toUpperCase(Locale.ROOT).contains(risk.toUpperCase(Locale.ROOT)))
-                    .count())
-        );
+        riskList.forEach(risk-> {
+                    java.util.Optional<Note> noteDetected =  noteList.stream()
+                            .filter((note) ->
+                                    note.getNote().toUpperCase(Locale.ROOT).contains(risk.toUpperCase(Locale.ROOT)))
+                            .findFirst();
+                    if(noteDetected.isPresent()){
+                        iteration.set(iteration.get()+ 1);
+                    }
+        });
         return iteration.longValue();
     }
 }
