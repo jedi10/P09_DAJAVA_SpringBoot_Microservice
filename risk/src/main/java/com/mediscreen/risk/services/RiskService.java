@@ -1,12 +1,17 @@
 package com.mediscreen.risk.services;
 
 import com.mediscreen.risk.exception.NotFoundException;
+import com.mediscreen.risk.model.HumanGender;
+import com.mediscreen.risk.model.Note;
 import com.mediscreen.risk.model.Patient;
 import com.mediscreen.risk.model.Risk;
+import com.mediscreen.risk.services.restTemplateService.NoteRestService;
 import com.mediscreen.risk.services.restTemplateService.PatientRestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <>Get Risk For a Patient</>
@@ -17,6 +22,9 @@ public class RiskService {
 
     @Autowired
     private PatientRestService patientRestService;
+
+    @Autowired
+    private NoteRestService noteRestService;
 
     /**
      * <b>get Risk for patient with patientId</b>
@@ -50,5 +58,14 @@ public class RiskService {
             log.debug("Patient Not Found: Risk Not Evaluated");
             throw notFoundException;
         }
+    }
+
+    private Risk findPatientRisk(Patient patient){
+        Risk riskResult = new Risk(patient);
+        HumanGender humanGender = patient.getGender();
+
+        List<Note> patientNotes = noteRestService.getList(patient.getId());
+
+        return riskResult;
     }
 }
