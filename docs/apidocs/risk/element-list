@@ -1,0 +1,9 @@
+com.mediscreen.risk
+com.mediscreen.risk.configuration
+com.mediscreen.risk.controller
+com.mediscreen.risk.exception
+com.mediscreen.risk.model
+com.mediscreen.risk.model.data
+com.mediscreen.risk.services
+com.mediscreen.risk.services.restTemplateService
+com.mediscreen.risk.utils

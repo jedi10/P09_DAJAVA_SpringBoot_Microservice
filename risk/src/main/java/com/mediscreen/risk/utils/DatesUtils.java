@@ -30,7 +30,7 @@ public class DatesUtils {
 
     /**
      * <b>LocalDate Now by using ZoneId</b>
-     *
+     * @param zoneId mandatory
      * @return now with LocalDate
      */
     public static LocalDate getNowLocalDate(String zoneId) {

@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * <>Get Risk For a Patient</>
+ * <b>Get Risk For a Patient</b>
  */
 @Slf4j
 @Service
