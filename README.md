@@ -65,6 +65,10 @@ All the process of Dockerization is made by a _DockerCompose_ File created in UI
     docker rmi -f ui
       
 
+### Application Architecture 
+
+![Application Package Diagram](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/package_diagram.png)
+
 ### for MySQL/Maria DBB
 
 A _DockerCompose_ File made a container with MariaDB Database.    
@@ -103,16 +107,25 @@ For developers, a local mode to test thymeleaf pages can be activated in UI Pati
 ## Application End-Points
 
 ### Patient Microservice End-Points
+Patient microservice manages all patient operations
 
 [![Swagger Capture for Patient](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerPatient.png)][1]
 
 ### Note Microservice End-Points
+Note microservice manages all patient note operations
 
 [![Swagger Capture for Note](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerNote.png)][2]
 
 ### UI End-Points for Thymeleaf pages
+UI project show Web Pages for all Patient and Note CRUD Operation
 
 [![Swagger Capture for UI](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerUI.png)][3]
+
+### Risk Microservice End-Points
+Risk microservice determine the patient diabete risk
+
+[![Swagger Capture for Risk](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerRisk.png)][4]
+
 
 ### Swagger URL
 
@@ -127,3 +140,4 @@ On project, End-Points Api Documentation can be find on public html page (swagge
 [1]: https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/swagger/PatientMicroservice.pdf
 [2]: https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/swagger/NoteMicroservice.pdf
 [3]: https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/swagger/mediscreenUI.pdf
+[4]: https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/swagger/RiskMicroservice.pdf
