@@ -15,6 +15,22 @@ services :
         condition: service_started
       note:
         condition: service_started
+      risk:
+        condition: service_started
+
+  risk:
+    image: risk
+    build:
+      context: ../risk
+      dockerfile: ../risk/dockerfile
+    container_name: risk
+    ports:
+      - "8061:8061"
+    depends_on:
+      note:
+        condition: service_started
+      patient:
+        condition: service_started
 
   note:
     image: note
