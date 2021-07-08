@@ -5,6 +5,7 @@ package com.mediscreen.risk.model;
  * @see com.mediscreen.risk.model.Risk
  */
 public enum RiskLevelEnum {
+    UNDEFINED("Risk Level Undefined"),
     NONE("No Risk"),
     BORDERLINE("Limited Risk"),
     DANGER("In Danger"),

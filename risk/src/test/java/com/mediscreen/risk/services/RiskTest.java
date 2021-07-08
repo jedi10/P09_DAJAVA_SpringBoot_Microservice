@@ -11,6 +11,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -85,7 +87,7 @@ class RiskServiceTest {
         Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(1996,12,31),"1 Brookside St","100-222-3333");
         when(patientRestService.getById(patient.getId())).thenReturn(patient);
 
-        int riskNumber = 3;
+        int riskNumber = 1;
         List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
         when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
 
@@ -94,7 +96,7 @@ class RiskServiceTest {
 
         //THEN
         assertNotNull(risk);
-        assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
+        assertEquals(RiskLevelEnum.NONE, risk.getRiskLevelEnum());
     }
 
     @Order(4)
@@ -104,8 +106,46 @@ class RiskServiceTest {
         Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(1996,12,31),"1 Brookside St","100-222-3333");
         when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
 
-        int riskNumber = 3;
+        int riskNumber = 1;
         List<Note> noteGiven = buildNoteWithDistinctRisk(riskNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.NONE, risk.getRiskLevelEnum());
+    }
+
+    @Order(5)
+    @ParameterizedTest
+    @CsvSource({"0", "1"})
+    void getRiskForLevel0(int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(1956,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.NONE, risk.getRiskLevelEnum());
+    }
+
+    @Order(6)
+    @ParameterizedTest
+    @CsvSource({"2", "3"})
+    void getRiskForLevel1_AgeUp30_2RiskFactor(int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(1956,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
         when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
 
         //WHEN
@@ -116,6 +156,117 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
     }
 
+    @Order(7)
+    @ParameterizedTest
+    @CsvSource({"M,3", "M,4"})
+    void getRiskForLevel2_AgeLess30_M_3RiskFactor(String sexe, int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,sexe ,"Jery","TheCat", LocalDate.of(2015,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
 
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
 
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
+    }
+
+    @Order(8)
+    @ParameterizedTest
+    @CsvSource({"M,5", "M,6"})
+    void getRiskForLevel2_AgeLess30_M_5RiskFactor(String sexe, int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,sexe ,"Jery","TheCat", LocalDate.of(2015,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.EARLY_ONSET, risk.getRiskLevelEnum());
+    }
+
+    @Order(9)
+    @ParameterizedTest
+    @CsvSource({"F,4", "F,5"})
+    void getRiskForLevel2_AgeLess30_F_4RiskFactor(String sexe, int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,sexe ,"Jery","TheCat", LocalDate.of(2015,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
+    }
+
+    @Order(10)
+    @ParameterizedTest
+    @CsvSource({"F,7", "F,8"})
+    void getRiskForLevel2_AgeLess30_F_7RiskFactor(String sexe, int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,sexe,"Jery","TheCat", LocalDate.of(2015,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.EARLY_ONSET, risk.getRiskLevelEnum());
+    }
+
+    @Order(10)
+    @ParameterizedTest
+    @CsvSource({"6","7"})
+    void getRiskForLevel2_AgeMore30_6RiskFactor(int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1, "M","Jery","TheCat", LocalDate.of(1970,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
+    }
+
+    @Order(10)
+    @ParameterizedTest
+    @CsvSource({"8","9"})
+    void getRiskForLevel3_AgeMore30_8RiskFactor(int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1, "M","Jery","TheCat", LocalDate.of(1970,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.EARLY_ONSET, risk.getRiskLevelEnum());
+    }
 }
