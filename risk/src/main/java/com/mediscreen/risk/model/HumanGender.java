@@ -22,7 +22,7 @@ public enum HumanGender {
 
     public static HumanGender getHumanGender(String ref){
         for (HumanGender each: values()){
-            if (each.toString().equalsIgnoreCase(ref)){
+            if (each.label.equalsIgnoreCase(ref)){
                 return each;
             }
         }
