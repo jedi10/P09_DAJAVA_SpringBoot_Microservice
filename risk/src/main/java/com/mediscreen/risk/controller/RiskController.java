@@ -7,10 +7,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 @Api(tags = {"Microservice Risk Controller"})
 @Tag(name = "Microservice Risk Controller", description = "Risk Microservice gives patient Risk")
 @RestController
@@ -30,8 +34,13 @@ public class RiskController {
     }
     )
     @GetMapping("access/id")
-    public String getAssessmentStringForPatient(@RequestParam Integer patId)
+    public String getAssessmentStringForPatient(@RequestParam Integer patId,
+                                                HttpServletRequest request, HttpServletResponse response)
     {
+        log.info("Risk Microservice: getRiskLevel with Patient id {} : EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                patId,
+                request.getRequestURI(),
+                response.getStatus());
         return riskService.getRisk(patId).toString();
     }
 
@@ -45,8 +54,13 @@ public class RiskController {
     }
     )
     @GetMapping("access/familyName")
-    public String getAssessmentStringForPatient(@RequestParam String familyName)
+    public String getAssessmentStringForPatient(@RequestParam String familyName,
+                                                HttpServletRequest request, HttpServletResponse response)
     {
+        log.info("Risk Microservice: getRiskLevel with Patient lastName {} : EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                familyName,
+                request.getRequestURI(),
+                response.getStatus());
         return riskService.getRisk(familyName).toString();
     }
 
@@ -60,8 +74,13 @@ public class RiskController {
     }
     )
     @GetMapping("risk/id")
-    public Risk getRiskForPatient(@RequestParam Integer patId)
+    public Risk getRiskForPatient(@RequestParam Integer patId,
+                                  HttpServletRequest request, HttpServletResponse response)
     {
+        log.info("Risk Microservice: getRiskLevel with Patient id {} : EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                patId,
+                request.getRequestURI(),
+                response.getStatus());
         return riskService.getRisk(patId);
     }
 
@@ -75,8 +94,12 @@ public class RiskController {
     }
     )
     @GetMapping("risk/familyName")
-    public Risk getRiskForPatient(@RequestParam String familyName)
+    public Risk getRiskForPatient(@RequestParam String familyName, HttpServletRequest request, HttpServletResponse response)
     {
+        log.info("Risk Microservice: getRiskLevel with Patient lastName {} : EndPoint: URL= '{}' : RESPONSE STATUS= '{}'",
+                familyName,
+                request.getRequestURI(),
+                response.getStatus());
         return riskService.getRisk(familyName);
     }
 }

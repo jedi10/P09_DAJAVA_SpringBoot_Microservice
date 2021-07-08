@@ -103,7 +103,28 @@ Central Project is UI Project which shows all data and interact with all microse
     http://localhost:8091/patient/list (Main Page)
     
 For developers, a local mode to test thymeleaf pages can be activated in UI PatientController and UI NoteController class.
+    
+Please note that in the actual version of the application, to obtain the patient risk, you will have to use this URL:
 
+    http://localhost:8061/access/familyName?familyName=dupond
+    http://localhost:8061/access/id?patId=1
+    **********************************
+    Patient: Paul Dupond (age 15) diabetes assessment is: No Risk
+    
+#### List of Risk Factor used by application
+
+    Hémoglobine A1C
+    Microalbumine
+    Taille
+    Poids
+    Fumeur
+    Anormal
+    Cholestérol
+    Vertige
+    Rechute
+    Réaction
+    Anticorps
+    
 ## Application End-Points
 
 ### Patient Microservice End-Points
@@ -122,7 +143,7 @@ UI project show Web Pages for all Patient and Note CRUD Operation
 [![Swagger Capture for UI](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerUI.png)][3]
 
 ### Risk Microservice End-Points
-Risk microservice determine the patient diabete risk
+Risk microservice determine the patient diabete risk Level by analysing Patient Notes with risk factor keywords
 
 [![Swagger Capture for Risk](https://jedi10.github.io/P09_DAJAVA_SpringBoot_Microservice/assets/swaggerRisk.png)][4]
 
@@ -133,7 +154,8 @@ On project, End-Points Api Documentation can be find on public html page (swagge
 
     http://localhost:8091/swagger-ui.html (for UI Project)
     http://localhost:8085/swagger-ui.html (for Patient Microservice)
-    http://localhost:8071/swagger-ui.html (for Patient Microservice)    
+    http://localhost:8071/swagger-ui.html (for Note Microservice)
+    http://localhost:8061/swagger-ui.html (for Risk Microservice)     
     
 
 

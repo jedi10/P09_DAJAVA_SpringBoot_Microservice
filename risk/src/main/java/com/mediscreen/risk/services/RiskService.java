@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
@@ -62,27 +64,48 @@ public class RiskService {
 
     private Risk findPatientRisk(Patient patient){
         Risk riskResult = new Risk(patient);
+
         HumanGender humanGender = patient.getGender();
 
         List<Note> patientNotes = noteRestService.getList(patient.getId());
 
         long riskIteration = distinctRiskIteration(patientNotes);
 
-        riskResult.setRiskLevelEnum(getRiskEnum(riskIteration));
+        riskResult.setRiskLevelEnum(getRiskEnum(riskIteration, patient.getGender(), riskResult.getAge()));
 
         return riskResult;
     }
 
-    static RiskLevelEnum getRiskEnum(long riskIteration) {
-        if (riskIteration >= 8) {
+    static RiskLevelEnum getRiskEnum(long patientRiskIteration, HumanGender humanGender, int age) {
+
+        long riskIterationLevel0 = 1;
+        long riskIterationLevel1 = 2;
+        long riskIterationLevel2 = 6;
+        long riskIterationLevel3 = 8;
+
+        if (age < 30) {
+            if (HumanGender.MEN.equals(humanGender)) {
+                riskIterationLevel2 = 3;
+                riskIterationLevel3 = 5;
+            }
+            if (HumanGender.WOMEN.equals(humanGender)) {
+                riskIterationLevel2 = 4;
+                riskIterationLevel3 = 7;
+            }
+        }
+
+        if (patientRiskIteration >= riskIterationLevel3) {
             return RiskLevelEnum.EARLY_ONSET;
-        } else if (riskIteration >= 6) {
+        } else if (patientRiskIteration >= riskIterationLevel2) {
             return RiskLevelEnum.DANGER;
-        } else if (riskIteration >= 2) {
+        } else if (patientRiskIteration >= riskIterationLevel1 && age > 30) {
             return RiskLevelEnum.BORDERLINE;
-        } else {
+        } else if (patientRiskIteration >= riskIterationLevel1) {
+            return RiskLevelEnum.NONE;
+        } else if (patientRiskIteration <= riskIterationLevel0){
             return RiskLevelEnum.NONE;
         }
+        return RiskLevelEnum.UNDEFINED;
     }
 
     static long distinctRiskIteration(List<Note> noteList) {
