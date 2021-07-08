@@ -100,6 +100,8 @@ public class RiskService {
             return RiskLevelEnum.DANGER;
         } else if (patientRiskIteration >= riskIterationLevel1 && age > 30) {
             return RiskLevelEnum.BORDERLINE;
+        } else if (patientRiskIteration >= riskIterationLevel1) {
+            return RiskLevelEnum.NONE;
         } else if (patientRiskIteration <= riskIterationLevel0){
             return RiskLevelEnum.NONE;
         }

@@ -139,6 +139,24 @@ class RiskServiceTest {
 
     @Order(6)
     @ParameterizedTest
+    @CsvSource({"1", "2"})
+    void getRiskForLevel1_AgeLess30_2RiskFactor(int riskFactorNumber){
+        //Given
+        Patient patient = new Patient(1,"M","Jery","TheCat", LocalDate.of(2015,12,31),"1 Brookside St","100-222-3333");
+        when(patientRestService.getByFamilyName(patient.getLastName())).thenReturn(patient);
+
+        List<Note> noteGiven = buildNoteWithDistinctRisk(riskFactorNumber);
+        when(noteRestService.getList(patient.getId())).thenReturn(noteGiven);
+
+        //WHEN
+        Risk risk = riskService.getRisk(patient.getLastName());
+
+        //THEN
+        assertNotNull(risk);
+        assertEquals(RiskLevelEnum.NONE, risk.getRiskLevelEnum());
+    }
+    @Order(7)
+    @ParameterizedTest
     @CsvSource({"2", "3"})
     void getRiskForLevel1_AgeUp30_2RiskFactor(int riskFactorNumber){
         //Given
@@ -156,7 +174,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.BORDERLINE, risk.getRiskLevelEnum());
     }
 
-    @Order(7)
+    @Order(8)
     @ParameterizedTest
     @CsvSource({"M,3", "M,4"})
     void getRiskForLevel2_AgeLess30_M_3RiskFactor(String sexe, int riskFactorNumber){
@@ -175,7 +193,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
     }
 
-    @Order(8)
+    @Order(9)
     @ParameterizedTest
     @CsvSource({"M,5", "M,6"})
     void getRiskForLevel2_AgeLess30_M_5RiskFactor(String sexe, int riskFactorNumber){
@@ -194,7 +212,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.EARLY_ONSET, risk.getRiskLevelEnum());
     }
 
-    @Order(9)
+    @Order(10)
     @ParameterizedTest
     @CsvSource({"F,4", "F,5"})
     void getRiskForLevel2_AgeLess30_F_4RiskFactor(String sexe, int riskFactorNumber){
@@ -213,7 +231,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
     }
 
-    @Order(10)
+    @Order(11)
     @ParameterizedTest
     @CsvSource({"F,7", "F,8"})
     void getRiskForLevel2_AgeLess30_F_7RiskFactor(String sexe, int riskFactorNumber){
@@ -232,7 +250,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.EARLY_ONSET, risk.getRiskLevelEnum());
     }
 
-    @Order(10)
+    @Order(12)
     @ParameterizedTest
     @CsvSource({"6","7"})
     void getRiskForLevel2_AgeMore30_6RiskFactor(int riskFactorNumber){
@@ -251,7 +269,7 @@ class RiskServiceTest {
         assertEquals(RiskLevelEnum.DANGER, risk.getRiskLevelEnum());
     }
 
-    @Order(10)
+    @Order(13)
     @ParameterizedTest
     @CsvSource({"8","9"})
     void getRiskForLevel3_AgeMore30_8RiskFactor(int riskFactorNumber){
